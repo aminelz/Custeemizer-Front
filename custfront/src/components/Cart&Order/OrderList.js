@@ -7,7 +7,7 @@ class OrderList extends Component {
   }
 
   componentDidMount() {
-    const url = "http://localhost:8080/api/orders";
+    const url = "http://localhost:8080/Orders";
     fetch(url)
       .then(ans => ans.json())
       .then(data => {
