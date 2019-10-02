@@ -1,8 +1,7 @@
 import React from "react";
-import Cartlist from "../components/Cartlist";
-import Tshirtlist from "../components/Tshirtlist";
-import Header from "../components/Header";
-import TshirtDetails from "../components/TshirtDetails";
+import Tshirtlist from "../components/Tshirt/Tshirtlist";
+import Header from "../components/Common/Header";
+import TshirtDetails from "../components/Tshirt/TshirtFullDetails";
 
 function HomePage() {
   return (

@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 //Pages
-import CartPage from "../pages/Cart";
+import CartPage from "../../pages/CartPage";
 
 const style = {
   backgroundColor: "lightblue",
