@@ -26,8 +26,12 @@ function TshirtPage(props) {
       </div>
     </div>
   );
-
-  return returnAll;
+  const path = props.match.path;
+  if (path.includes("/Tshirts/")) {
+    return returnAll;
+  } else if (path.includes("/Tshirt/")) {
+    return returnDetails;
+  }
 }
 
 export default TshirtPage;

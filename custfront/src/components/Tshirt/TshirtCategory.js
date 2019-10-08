@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { withRouter } from "react-router-dom";
+import { withRouter, Link } from "react-router-dom";
 
 class TshirtCategory extends Component {
   constructor(props) {
@@ -25,7 +25,9 @@ class TshirtCategory extends Component {
         <td>{tshirt.size}</td>
         <td>{tshirt.price} DHS</td>
         <td>{tshirt.description}</td>
-        <td>{tshirt.tshirt_ID}</td>
+        <td>
+          <Link to={"/Tshirt/" + tshirt.tshirt_ID}>{tshirt.tshirt_ID}</Link>
+        </td>
         <td>
           <img src={tshirt.image_URL} width="100px" alt="Tshirt" />
         </td>

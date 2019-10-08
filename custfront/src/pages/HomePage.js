@@ -1,7 +1,6 @@
 import React from "react";
 import Tshirtlist from "../components/Tshirt/TshirtList";
 import Header from "../components/Common/Header";
-import { Link } from "react-router-dom";
 
 function HomePage() {
   return (

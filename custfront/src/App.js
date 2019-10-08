@@ -7,9 +7,7 @@ import CartPage from "./pages/CartPage";
 import HomePage from "./pages/HomePage";
 import OrdersPage from "./pages/OrdersPage";
 import UserPage from "./pages/UserPage";
-import CustomerInfo from "./components/Customer/CustomerInfo";
 import TshirtPage from "./pages/TshirtPage";
-//import Userlist from "./components/Userlist";
 
 function App() {
   return (
@@ -21,8 +19,9 @@ function App() {
         <Route path="/Home" component={HomePage} />
         <Route path="/Customers" component={UserPage} />
         <Route path="/Admins" component={UserPage} />
-        <Route path="/Customer/:id" exact component={CustomerInfo} />
-        <Route path="/Tshirts/:sex" component={TshirtPage} />
+        <Route path="/Customer/:id" exact component={UserPage} />
+        <Route path="/Tshirts/:sex" exact component={TshirtPage} />
+        <Route path="/Tshirt/:id" exact component={TshirtPage} />
       </Switch>
     </Router>
   );

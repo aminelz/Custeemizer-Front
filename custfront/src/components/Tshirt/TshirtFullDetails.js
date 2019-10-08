@@ -27,7 +27,6 @@ class TshirtFullDetails extends Component {
         <td>{this.state.tshirt.description}</td>
         <td>{this.state.tshirt.tshirt_ID}</td>
         <td>
-          {" "}
           <img src={this.state.tshirt.image_URL} width="100px" alt="Tshirt" />
         </td>
       </tr>
