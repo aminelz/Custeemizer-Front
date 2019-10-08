@@ -13,8 +13,6 @@ function HomePage() {
         <h1 style={{ textAlign: "center" }}> Home</h1>
         <Tshirtlist />
       </div>
-      <Link to="/Tshirts/Homme"> Homme </Link>
-      <Link to="/Tshirts/Femme"> Femme </Link>
     </div>
   );
 }

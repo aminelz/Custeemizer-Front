@@ -2,6 +2,7 @@ import React, { Component, Fragment } from "react";
 import { Link } from "react-router-dom";
 import Nav from "./Nav";
 import CartIcon from "../../ressources/Carticon.png";
+import { withRouter } from "react-router-dom";
 
 const style = {
   backgroundColor: "rgb(0,0,0)",
@@ -58,4 +59,4 @@ class Header extends Component {
   }
 }
 
-export default Header;
+export default withRouter(Header);

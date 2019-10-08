@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { withRouter } from "react-router-dom";
 
 class TshirtFullDetails extends Component {
   constructor(props) {
@@ -6,7 +7,7 @@ class TshirtFullDetails extends Component {
     this.state = { tshirt: [] };
   }
   async componentDidMount() {
-    const url = "http://localhost:8080/Product/Tshirt/12";
+    const url = `http://localhost:8080/Product/Tshirt/${this.props.match.params.id}`;
     await fetch(url)
       .then(async res => await res.json())
       .then(data => {
@@ -53,4 +54,4 @@ class TshirtFullDetails extends Component {
   }
 }
 
-export default TshirtFullDetails;
+export default withRouter(TshirtFullDetails);

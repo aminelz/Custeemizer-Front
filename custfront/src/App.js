@@ -9,7 +9,6 @@ import OrdersPage from "./pages/OrdersPage";
 import UserPage from "./pages/UserPage";
 import CustomerInfo from "./components/Customer/CustomerInfo";
 import TshirtPage from "./pages/TshirtPage";
-import TshirtCategory from "./components/Tshirt/TshirtCategory";
 //import Userlist from "./components/Userlist";
 
 function App() {
@@ -23,6 +22,7 @@ function App() {
         <Route path="/Customers" component={UserPage} />
         <Route path="/Admins" component={UserPage} />
         <Route path="/Customer/:id" exact component={CustomerInfo} />
+        <Route path="/Tshirts/:sex" component={TshirtPage} />
       </Switch>
     </Router>
   );

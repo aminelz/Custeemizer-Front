@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { withRouter } from "react-router-dom";
 
 class TshirtCategory extends Component {
   constructor(props) {
@@ -52,4 +53,4 @@ class TshirtCategory extends Component {
   }
 }
 
-export default TshirtCategory;
+export default withRouter(TshirtCategory);

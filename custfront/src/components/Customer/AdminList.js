@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { withRouter } from "react-router-dom";
 
 class Adminlist extends Component {
   constructor(props) {
@@ -46,4 +47,4 @@ class Adminlist extends Component {
   }
 }
 
-export default Adminlist;
+export default withRouter(Adminlist);

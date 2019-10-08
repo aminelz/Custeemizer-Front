@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { withRouter } from "react-router-dom";
 
 class Tshirtlist extends Component {
   constructor(props) {
@@ -62,4 +63,4 @@ class Tshirtlist extends Component {
   }
 }
 
-export default Tshirtlist;
+export default withRouter(Tshirtlist);

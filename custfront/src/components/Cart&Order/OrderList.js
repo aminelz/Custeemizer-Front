@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { withRouter } from "react-router-dom";
 
 class OrderList extends Component {
   constructor(props) {
@@ -46,4 +47,4 @@ class OrderList extends Component {
   }
 }
 
-export default OrderList;
+export default withRouter(OrderList);
