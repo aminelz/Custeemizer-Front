@@ -9,6 +9,7 @@ function OrdersPage() {
         <Header />
       </div>
       <div>
+        <h1 style={{ textAlign: "center" }}> Orders</h1>
         <OrderList />
       </div>
     </div>

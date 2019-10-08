@@ -6,12 +6,12 @@ class OrderList extends Component {
     this.state = { orders: [] };
   }
 
-  componentDidMount() {
+  async componentDidMount() {
     const url = "http://localhost:8080/Orders";
-    fetch(url)
-      .then(ans => ans.json())
+    await fetch(url)
+      .then(async ans => await ans.json())
       .then(data => {
-        this.setState({ orders: data._embedded.orders });
+        this.setState({ orders: data });
       })
       .catch(err => console.log(err));
   }
@@ -21,7 +21,10 @@ class OrderList extends Component {
       <tr key={index}>
         <td>{order.processed}</td>
         <td>{order.total_price}</td>
-        <td>{order._links.cart.href}</td>
+        <td>
+          {order.creation_time[0]}/{order.creation_time[1]}/
+          {order.creation_time[2]}
+        </td>
       </tr>
     ));
     return (
@@ -32,7 +35,7 @@ class OrderList extends Component {
               <tr>
                 <th>Processing</th>
                 <th>Price</th>
-                <th>Cart link</th>
+                <th>Creation Date</th>
               </tr>
               {tableRows}
             </tbody>

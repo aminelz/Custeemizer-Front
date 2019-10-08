@@ -5,10 +5,10 @@ class TshirtFullDetails extends Component {
     super(props);
     this.state = { tshirt: [] };
   }
-  componentDidMount() {
+  async componentDidMount() {
     const url = "http://localhost:8080/Product/Tshirt/12";
-    fetch(url)
-      .then(res => res.json())
+    await fetch(url)
+      .then(async res => await res.json())
       .then(data => {
         this.setState({ tshirt: data });
       })

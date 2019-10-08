@@ -1,28 +1,19 @@
 import React, { Component } from "react";
 
-class Tshirtlist extends Component {
+class TshirtCategory extends Component {
   constructor(props) {
     super(props);
     this.state = { tshirts: [] };
   }
   async componentDidMount() {
-    const url = "http://localhost:8080/Product/Tshirt";
+    const url = `http://localhost:8080/Product/Tshirt/Sex/${this.props.match.params.sex}`;
     await fetch(url)
       .then(async res => await res.json())
       .then(data => {
         this.setState({ tshirts: data });
       })
       .catch(err => console.error(err));
-    console.log(toString(this.state.customized));
   }
-
-  //   customizable(x) {
-  //     if ((x = false)) {
-  //       return "No";
-  //     } else if ((x = true)) {
-  //       return "No";
-  //     }
-  //   }
 
   render() {
     const tableRows = this.state.tshirts.map((tshirt, index) => (
@@ -35,7 +26,6 @@ class Tshirtlist extends Component {
         <td>{tshirt.description}</td>
         <td>{tshirt.tshirt_ID}</td>
         <td>
-          {" "}
           <img src={tshirt.image_URL} width="100px" alt="Tshirt" />
         </td>
       </tr>
@@ -62,4 +52,4 @@ class Tshirtlist extends Component {
   }
 }
 
-export default Tshirtlist;
+export default TshirtCategory;

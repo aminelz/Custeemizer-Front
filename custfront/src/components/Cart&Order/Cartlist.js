@@ -10,10 +10,10 @@ class Cartlist extends Component {
   //     this.state.total = this.state.items;
   //   }
 
-  componentDidMount() {
+  async componentDidMount() {
     const url = "http://localhost:8080/Cart/16/items";
-    fetch(url)
-      .then(res => res.json())
+    await fetch(url)
+      .then(async res => await res.json())
       .then(data => {
         this.setState({ items: data });
       })

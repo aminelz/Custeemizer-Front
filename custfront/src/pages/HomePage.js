@@ -1,7 +1,7 @@
 import React from "react";
-import Tshirtlist from "../components/Tshirt/Tshirtlist";
+import Tshirtlist from "../components/Tshirt/TshirtList";
 import Header from "../components/Common/Header";
-import TshirtDetails from "../components/Tshirt/TshirtFullDetails";
+import { Link } from "react-router-dom";
 
 function HomePage() {
   return (
@@ -10,11 +10,11 @@ function HomePage() {
         <Header />
       </div>
       <div>
+        <h1 style={{ textAlign: "center" }}> Home</h1>
         <Tshirtlist />
       </div>
-      <div>
-        <TshirtDetails />
-      </div>
+      <Link to="/Tshirts/Homme"> Homme </Link>
+      <Link to="/Tshirts/Femme"> Femme </Link>
     </div>
   );
 }
