@@ -1,6 +1,11 @@
 import React from "react";
 import "./App.css";
-import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Route,
+  Switch,
+  withRouter
+} from "react-router-dom";
 
 //Pages to be routed
 import CartPage from "./pages/CartPage";
@@ -19,9 +24,10 @@ function App() {
         <Route path="/Home" component={HomePage} />
         <Route path="/Customers" component={UserPage} />
         <Route path="/Admins" component={UserPage} />
-        <Route path="/Customer/:id" exact component={UserPage} />
-        <Route path="/Tshirts/:sex" exact component={TshirtPage} />
-        <Route path="/Tshirt/:id" exact component={TshirtPage} />
+        <Route path="/Customer/:id" component={UserPage} />
+        <Route path="/Tshirts/:sex" component={withRouter(TshirtPage)} />
+        <Route path="/Tshirt/:id" component={withRouter(TshirtPage)} />
+        <Route path="/Order/:id" component={OrdersPage} />
       </Switch>
     </Router>
   );

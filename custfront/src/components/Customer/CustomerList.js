@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Link } from "react-router-dom";
+import { Link, withRouter } from "react-router-dom";
 
 class Customerlist extends Component {
   constructor(props) {
@@ -26,7 +26,9 @@ class Customerlist extends Component {
         <td>{user.password}</td>
         <td>{user.user_ID}</td>
         <td>
-          <Link to={"/Customer/" + (total + 1)}>{(total = total + 1)}</Link>
+          <Link to={{ pathname: "/Customer/" + (total + 1), myuser: { user } }}>
+            {(total = total + 1)}
+          </Link>
         </td>
       </tr>
     ));
@@ -52,4 +54,4 @@ class Customerlist extends Component {
   }
 }
 
-export default Customerlist;
+export default withRouter(Customerlist);

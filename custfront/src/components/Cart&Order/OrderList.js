@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { withRouter } from "react-router-dom";
+import { withRouter, Link } from "react-router-dom";
 
 class OrderList extends Component {
   constructor(props) {
@@ -25,6 +25,16 @@ class OrderList extends Component {
         <td>
           {order.creation_time[0]}/{order.creation_time[1]}/
           {order.creation_time[2]}
+        </td>
+        <td>
+          <Link
+            to={{
+              pathname: "/Order/" + order.mycart.cart_ID,
+              total: order.total_price
+            }}
+          >
+            Click to see order details
+          </Link>
         </td>
       </tr>
     ));

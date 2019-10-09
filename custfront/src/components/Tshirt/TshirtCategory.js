@@ -16,8 +16,16 @@ class TshirtCategory extends Component {
       .catch(err => console.error(err));
   }
 
+  async componentDidUpdate(prevProps, prevState) {
+    // only update chart if the data has changed
+    if (prevProps.match.params.sex !== this.props.match.params.sex) {
+      this.componentDidMount();
+    }
+  }
+
   render() {
-    const tableRows = this.state.tshirts.map((tshirt, index) => (
+    const { tshirts } = this.state;
+    const tableRows = tshirts.map((tshirt, index) => (
       <tr key={index}>
         <td>{tshirt.name}</td>
         <td>{tshirt.sex}</td>
