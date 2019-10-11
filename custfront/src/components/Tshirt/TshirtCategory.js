@@ -7,6 +7,9 @@ class TshirtCategory extends Component {
     this.state = { tshirts: [] };
   }
   async componentDidMount() {
+    await this.fetchtshirts();
+  }
+  async fetchtshirts() {
     const url = `http://localhost:8080/Product/Tshirt/Sex/${this.props.match.params.sex}`;
     await fetch(url)
       .then(async res => await res.json())
@@ -19,7 +22,7 @@ class TshirtCategory extends Component {
   async componentDidUpdate(prevProps, prevState) {
     // only update chart if the data has changed
     if (prevProps.match.params.sex !== this.props.match.params.sex) {
-      this.componentDidMount();
+      this.fetchtshirts();
     }
   }
 

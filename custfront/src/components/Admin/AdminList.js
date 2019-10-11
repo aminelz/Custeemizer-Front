@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { withRouter } from "react-router-dom";
+import AddAdmin from "./AddAdmin";
 
 class Adminlist extends Component {
   constructor(props) {
@@ -8,6 +9,15 @@ class Adminlist extends Component {
   }
 
   async componentDidMount() {
+    await this.fetchadmins();
+  }
+
+  async componentDidUpdate(prevProps, prevState) {
+    // only update chart if the data has changed
+    // await this.fetchadmins();
+  }
+
+  async fetchadmins() {
     const url = `http://localhost:8080/Admins`;
     await fetch(url)
       .then(async res => await res.json())
@@ -16,6 +26,20 @@ class Adminlist extends Component {
       })
       .catch(err => console.log(err));
   }
+
+  async addAdmin(admin) {
+    await fetch("http://localhost:8080/api/endUsers", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(admin)
+    })
+      .then(res => this.fetchadmins)
+      .catch(err => console.error(err));
+    window.location.reload();
+  }
+
   render() {
     const tableRows = this.state.users.map((user, index) => (
       <tr key={index}>
@@ -29,6 +53,7 @@ class Adminlist extends Component {
     return (
       <div>
         <div>
+          <AddAdmin addAdmin={this.addAdmin} fetchadmins={this.fetchadmins} />
           <table>
             <tbody>
               <tr>

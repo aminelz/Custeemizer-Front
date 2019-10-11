@@ -8,6 +8,10 @@ class OrderList extends Component {
   }
 
   async componentDidMount() {
+    await this.fetchorders();
+  }
+
+  async fetchorders() {
     const url = "http://localhost:8080/Orders";
     await fetch(url)
       .then(async ans => await ans.json())
@@ -16,7 +20,6 @@ class OrderList extends Component {
       })
       .catch(err => console.log(err));
   }
-
   render() {
     const tableRows = this.state.orders.map((order, index) => (
       <tr key={index}>

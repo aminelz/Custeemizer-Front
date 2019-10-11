@@ -7,6 +7,10 @@ class TshirtFullDetails extends Component {
     this.state = { tshirt: [] };
   }
   async componentDidMount() {
+    await this.fetchtshirts();
+  }
+
+  async fetchtshirts() {
     const url = `http://localhost:8080/Product/Tshirt/${this.props.match.params.id}`;
     await fetch(url)
       .then(async res => await res.json())

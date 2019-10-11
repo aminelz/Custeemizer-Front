@@ -12,6 +12,10 @@ class OrderDetails extends Component {
   //   }
 
   async componentDidMount() {
+    await this.fetchitems();
+  }
+
+  async fetchitems() {
     const url = `http://localhost:8080/Cart/${this.props.match.params.id}/items`;
     await fetch(url)
       .then(async res => await res.json())

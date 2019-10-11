@@ -7,6 +7,10 @@ class Tshirtlist extends Component {
     this.state = { tshirts: [] };
   }
   async componentDidMount() {
+    await this.fetchtshirt();
+  }
+
+  async fetchtshirt() {
     const url = "http://localhost:8080/Product/Tshirt";
     await fetch(url)
       .then(async res => await res.json())

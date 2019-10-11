@@ -24,6 +24,10 @@ class Header extends Component {
   }
 
   async componentDidMount() {
+    await this.fetchcart();
+  }
+
+  async fetchcart() {
     const url = "http://localhost:8080/Cart/16";
     await fetch(url)
       .then(async res => await res.json())
@@ -31,7 +35,6 @@ class Header extends Component {
         this.setState({ cart: data });
       })
       .catch(err => console.log(err));
-    //this.setState({ total: this.state.cart.total });
   }
 
   render() {

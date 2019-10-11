@@ -12,6 +12,10 @@ class Cartlist extends Component {
   //   }
 
   async componentDidMount() {
+    await this.fetchcart();
+  }
+
+  async fetchcart() {
     const url = "http://localhost:8080/Cart/16/items";
     await fetch(url)
       .then(async res => await res.json())

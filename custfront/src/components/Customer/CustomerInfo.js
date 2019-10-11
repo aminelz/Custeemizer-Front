@@ -8,6 +8,10 @@ class CustomerInfo extends Component {
   }
 
   async componentDidMount() {
+    await this.fetchcustomer();
+  }
+
+  async fetchcustomer() {
     const url = `http://localhost:8080/Customer/${this.props.match.params.id}`;
     await fetch(url)
       .then(async res => await res.json())

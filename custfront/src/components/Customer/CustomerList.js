@@ -8,6 +8,10 @@ class Customerlist extends Component {
   }
 
   async componentDidMount() {
+    await this.fetchcustomers();
+  }
+
+  async fetchcustomers() {
     const url = `http://localhost:8080/Customers`;
     await fetch(url)
       .then(async res => await res.json())

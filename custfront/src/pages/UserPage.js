@@ -1,7 +1,7 @@
 import React from "react";
 import Customerlist from "../components/Customer/CustomerList";
 import Header from "../components/Common/Header";
-import Adminlist from "../components/Customer/AdminList";
+import Adminlist from "../components/Admin/AdminList";
 import CustomerInfo from "../components/Customer/CustomerInfo";
 
 function UserPage({ match }) {
