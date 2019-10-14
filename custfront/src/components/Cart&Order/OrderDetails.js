@@ -23,7 +23,6 @@ class OrderDetails extends Component {
         this.setState({ items: data });
       })
       .catch(err => console.log(err));
-    console.log(this.state.items);
   }
   render() {
     const tableRows = this.state.items.map((item, index) => (

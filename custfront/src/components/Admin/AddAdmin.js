@@ -10,8 +10,34 @@ class AddAdmin extends Component {
       lastname: "",
       email: "",
       password: "",
-      admin: true
+      admin: true,
+      response: null,
+      errors: []
     };
+  }
+
+  async fetchemail() {
+    const url = `http://localhost:8080/User/${this.state.email}/email`;
+    await fetch(url)
+      .then(async res => await res.json())
+      .then(data => {
+        this.setState({ response: data.response });
+      })
+      .catch(err => console.log(err));
+    // console.log(this.state.response);
+  }
+
+  async validateform() {
+    const error = [];
+    console.log(this.state.response);
+    await this.fetchemail();
+    console.log(this.state.response);
+    if (this.state.response === true) {
+      error.push(
+        "Email already in use. Please use another email or log in to your existing account!"
+      );
+    }
+    return error;
   }
 
   handleChange = event => {
@@ -20,8 +46,15 @@ class AddAdmin extends Component {
 
   handleSubmit = event => {
     event.preventDefault();
+    const error = this.validateform();
+    if (error.length > 0) {
+      this.setState({ errors: error });
+      return;
+    }
+
     var bcrypt = require("bcryptjs");
     var hash = bcrypt.hashSync(this.state.password, 10);
+
     var newAdmin = {
       first_name: this.state.firstname,
       last_name: this.state.lastname,
@@ -30,7 +63,7 @@ class AddAdmin extends Component {
       admin: true
     };
     this.props.addAdmin(newAdmin);
-    this.refs.addDialog.hide();
+    // this.refs.addDialog.hide();
   };
 
   render() {
@@ -39,6 +72,9 @@ class AddAdmin extends Component {
         <SkyLight hideOnOverlayClicked ref="addDialog">
           <h3>New Admin</h3>
           <form>
+            {this.state.errors.map(error => (
+              <p key={error}>Error: {error}</p>
+            ))}
             <input
               type="text"
               placeholder="First Name"
