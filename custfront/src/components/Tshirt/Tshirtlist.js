@@ -18,16 +18,7 @@ class Tshirtlist extends Component {
         this.setState({ tshirts: data });
       })
       .catch(err => console.error(err));
-    console.log(toString(this.state.customized));
   }
-
-  //   customizable(x) {
-  //     if ((x = false)) {
-  //       return "No";
-  //     } else if ((x = true)) {
-  //       return "No";
-  //     }
-  //   }
 
   render() {
     const tableRows = this.state.tshirts.map((tshirt, index) => (

@@ -24,14 +24,11 @@ class AddAdmin extends Component {
         this.setState({ response: data.response });
       })
       .catch(err => console.log(err));
-    // console.log(this.state.response);
   }
 
   async validateform() {
     const error = [];
-    console.log(this.state.response);
     await this.fetchemail();
-    console.log(this.state.response);
     if (this.state.response === true) {
       error.push(
         "Email already in use. Please use another email or log in to your existing account!"
@@ -44,26 +41,26 @@ class AddAdmin extends Component {
     this.setState({ [event.target.name]: event.target.value });
   };
 
-  handleSubmit = event => {
+  handleSubmit = async event => {
     event.preventDefault();
-    const error = this.validateform();
+    const error = await this.validateform();
     if (error.length > 0) {
       this.setState({ errors: error });
       return;
+    } else {
+      var bcrypt = require("bcryptjs");
+      var hash = bcrypt.hashSync(this.state.password, 10);
+
+      var newAdmin = {
+        first_name: this.state.firstname,
+        last_name: this.state.lastname,
+        email: this.state.email,
+        password: hash,
+        admin: true
+      };
+      this.props.addAdmin(newAdmin);
+      this.refs.addDialog.hide();
     }
-
-    var bcrypt = require("bcryptjs");
-    var hash = bcrypt.hashSync(this.state.password, 10);
-
-    var newAdmin = {
-      first_name: this.state.firstname,
-      last_name: this.state.lastname,
-      email: this.state.email,
-      password: hash,
-      admin: true
-    };
-    this.props.addAdmin(newAdmin);
-    // this.refs.addDialog.hide();
   };
 
   render() {
@@ -73,12 +70,15 @@ class AddAdmin extends Component {
           <h3>New Admin</h3>
           <form>
             {this.state.errors.map(error => (
-              <p key={error}>Error: {error}</p>
+              <p syle={{ color: "red" }} key={error}>
+                Error: {error}
+              </p>
             ))}
             <input
               type="text"
               placeholder="First Name"
               name="firstname"
+              required
               onChange={this.handleChange}
             />
             <br />
@@ -86,6 +86,7 @@ class AddAdmin extends Component {
               type="text"
               placeholder="Last Name"
               name="lastname"
+              required
               onChange={this.handleChange}
             />
             <br />
@@ -93,6 +94,7 @@ class AddAdmin extends Component {
               type="email"
               placeholder="Email"
               name="email"
+              required
               onChange={this.handleChange}
             />
             <br />
@@ -100,6 +102,7 @@ class AddAdmin extends Component {
               type="password"
               placeholder="Password"
               name="password"
+              required
               onChange={this.handleChange}
             />
             <br />

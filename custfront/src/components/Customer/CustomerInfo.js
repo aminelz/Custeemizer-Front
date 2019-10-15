@@ -23,7 +23,6 @@ class CustomerInfo extends Component {
         });
       })
       .catch(err => console.log(err));
-    console.log(this.state.shipping);
   }
   render() {
     const UserRows = (
