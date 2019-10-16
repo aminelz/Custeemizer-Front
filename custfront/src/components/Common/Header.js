@@ -1,7 +1,7 @@
 import React, { Component, Fragment } from "react";
 import { Link } from "react-router-dom";
 import Nav from "./Nav";
-import CartIcon from "../../ressources/Carticon.png";
+import ShoppingCartIcon from "@material-ui/icons/ShoppingCart";
 import { withRouter } from "react-router-dom";
 
 const style = {
@@ -42,15 +42,7 @@ class Header extends Component {
       <Fragment>
         <div style={style}>
           <p style={textstyle}>
-            <img
-              src={CartIcon}
-              width="25px"
-              alt="cart logo"
-              style={{
-                marginRight: "5px",
-                color: "white"
-              }}
-            />
+            <ShoppingCartIcon />
             <Link to="/Cart" style={{ color: "white" }}>
               Total Price : {this.state.cart.total} MAD{" "}
             </Link>

@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import { withRouter } from "react-router-dom";
-import SkyLight from "react-skylight";
 
 class AddAdmin extends Component {
   constructor(props) {
@@ -36,46 +35,44 @@ class AddAdmin extends Component {
   render() {
     return (
       <div>
-        <SkyLight hideOnOverlayClicked ref="addDialog">
-          <h3>New Admin</h3>
-          <form>
-            <input
-              type="text"
-              placeholder="First Name"
-              name="firstname"
-              onChange={this.handleChange}
-            />
-            <br />
-            <input
-              type="text"
-              placeholder="Last Name"
-              name="lastname"
-              onChange={this.handleChange}
-            />
-            <br />
-            <input
-              type="email"
-              placeholder="Email"
-              name="email"
-              onChange={this.handleChange}
-            />
-            <br />
-            <input
-              type="password"
-              placeholder="Password"
-              name="password"
-              onChange={this.handleChange}
-            />
-            <br />
-            <select>
-              <option value="true" onChange={this.handleChange}>
-                Admin
-              </option>
-            </select>
-            <br />
-            <button onClick={this.handleSubmit}>Save</button>
-          </form>
-        </SkyLight>
+        <h3>New Admin</h3>
+        <form>
+          <input
+            type="text"
+            placeholder="First Name"
+            name="firstname"
+            onChange={this.handleChange}
+          />
+          <br />
+          <input
+            type="text"
+            placeholder="Last Name"
+            name="lastname"
+            onChange={this.handleChange}
+          />
+          <br />
+          <input
+            type="email"
+            placeholder="Email"
+            name="email"
+            onChange={this.handleChange}
+          />
+          <br />
+          <input
+            type="password"
+            placeholder="Password"
+            name="password"
+            onChange={this.handleChange}
+          />
+          <br />
+          <select>
+            <option value="true" onChange={this.handleChange}>
+              Admin
+            </option>
+          </select>
+          <br />
+          <button onClick={this.handleSubmit}>Save</button>
+        </form>
         <div>
           <button
             style={{ margin: "10px" }}
