@@ -1,6 +1,13 @@
 import React, { Component } from "react";
 import { withRouter } from "react-router-dom";
 import AddAdmin from "./AddAdmin";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableRow,
+  TableHead
+} from "@material-ui/core";
 
 class Adminlist extends Component {
   constructor(props) {
@@ -42,30 +49,32 @@ class Adminlist extends Component {
 
   render() {
     const tableRows = this.state.users.map((user, index) => (
-      <tr key={index}>
-        <td>{user.first_name}</td>
-        <td>{user.last_name}</td>
-        <td>{user.email}</td>
-        <td>{user.password}</td>
-        <td>{user.user_ID}</td>
-      </tr>
+      <TableRow key={index}>
+        <TableCell align="left">{user.user_ID}</TableCell>
+        <TableCell align="right">{user.first_name}</TableCell>
+        <TableCell align="right">{user.last_name}</TableCell>
+        <TableCell align="right">{user.email}</TableCell>
+        <TableCell align="center">{user.password}</TableCell>
+      </TableRow>
     ));
     return (
       <div>
         <div>
-          <AddAdmin addAdmin={this.addAdmin} fetchadmins={this.fetchadmins} />
-          <table>
-            <tbody>
-              <tr>
-                <th>First Name</th>
-                <th>Last Name</th>
-                <th>Email</th>
-                <th>Password</th>
-                <th>ID</th>
-              </tr>
-              {tableRows}
-            </tbody>
-          </table>
+          <AddAdmin
+            align="right"
+            addAdmin={this.addAdmin}
+            fetchadmins={this.fetchadmins}
+          />
+          <Table>
+            <TableHead style={{ fontStyle: "italic" }}>
+              <TableCell align="left">ID</TableCell>
+              <TableCell align="center">First Name</TableCell>
+              <TableCell align="center"> Last Name</TableCell>
+              <TableCell align="center"> Email</TableCell>
+              <TableCell align="center">Password </TableCell>
+            </TableHead>
+            <TableBody>{tableRows}</TableBody>
+          </Table>
         </div>
       </div>
     );

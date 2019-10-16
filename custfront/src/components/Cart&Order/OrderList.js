@@ -8,19 +8,8 @@ import {
   TableBody,
   TableCell,
   TableRow,
-  TableHead,
-  makeStyles
+  TableHead
 } from "@material-ui/core";
-
-const useStyles = makeStyles({
-  root: {
-    width: "100%",
-    overflowX: "auto"
-  },
-  table: {
-    minWidth: 650
-  }
-});
 
 class OrderList extends Component {
   constructor(props) {
@@ -42,29 +31,6 @@ class OrderList extends Component {
       .catch(err => console.log(err));
   }
   render() {
-    // const tableRows = this.state.orders.map((order, index) => (
-    //   <tr key={index}>
-    //     <td>{order.processed}</td>
-    //     <td>{order.total_price}</td>
-    //     <td>
-    //       {order.creation_time[0]}/{order.creation_time[1]}/
-    //       {order.creation_time[2]}
-    //     </td>
-    //     <td>
-    //       <Link
-    //         to={{
-    //           pathname: "/Order/" + order.mycart.cart_ID,
-    //           total: order.total_price
-    //         }}
-    //       >
-    //         Click to see order details
-    //       </Link>
-    //     </td>
-    //     <td>
-    //       <EditIcon />
-    //     </td>
-    //   </tr>
-    // ));
     var count = 0;
     const rows = this.state.orders.map((order, index) => (
       <TableRow key={index}>
@@ -95,8 +61,8 @@ class OrderList extends Component {
     return (
       <div>
         <div>
-          <Table aria-label="simple table">
-            <TableHead>
+          <Table aria-label="simple table" title="Orders List">
+            <TableHead style={{ fontStyle: "italic" }}>
               <TableRow>
                 <TableCell> </TableCell>
                 <TableCell align="center">Creation Date</TableCell>
