@@ -8,12 +8,12 @@ import {
 } from "react-router-dom";
 
 //Pages to be routed
-import CartPage from "./pages/CartPage";
-import HomePage from "./pages/HomePage";
-import OrdersPage from "./pages/OrdersPage";
-import UserPage from "./pages/UserPage";
-import TshirtPage from "./pages/TshirtPage";
-import SignupPage from "./pages/SignUpPage";
+import CartPage from "./Shared Admin&Customer/pages/CartPage";
+import HomePage from "./Shared Admin&Customer/pages/HomePage";
+import OrdersPage from "./Shared Admin&Customer/pages/OrdersPage";
+import UserPage from "./Shared Admin&Customer/pages/UserPage";
+import TshirtPage from "./Shared Admin&Customer/pages/TshirtPage";
+import SignupPage from "./Shared Admin&Customer/pages/SignUpPage";
 
 function App() {
   return (

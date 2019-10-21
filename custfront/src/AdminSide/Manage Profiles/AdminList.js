@@ -12,16 +12,21 @@ import {
 class Adminlist extends Component {
   constructor(props) {
     super(props);
-    this.state = { users: [] };
+    this.state = { users: [], added: false };
+    this.handleStateChange = this.handleStateChange.bind(this);
   }
 
   async componentDidMount() {
     await this.fetchadmins();
   }
 
+  handleStateChange() {
+    this.setState({ added: true });
+  }
+
   async componentDidUpdate(prevProps, prevState) {
     // only update chart if the data has changed
-    // await this.fetchadmins();
+    await this.fetchadmins();
   }
 
   async fetchadmins() {
@@ -44,7 +49,6 @@ class Adminlist extends Component {
     })
       .then(res => this.fetchadmins)
       .catch(err => console.error(err));
-    window.location.reload();
   }
 
   render() {
@@ -64,6 +68,7 @@ class Adminlist extends Component {
             align="right"
             addAdmin={this.addAdmin}
             fetchadmins={this.fetchadmins}
+            track={this.handleStateChange}
           />
           <Table>
             <TableHead style={{ fontStyle: "italic" }}>

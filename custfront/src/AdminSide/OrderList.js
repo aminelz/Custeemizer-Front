@@ -13,11 +13,16 @@ import ModifyOrder from "./ModifyOrder";
 class OrderList extends Component {
   constructor(props) {
     super(props);
-    this.state = { orders: [] };
+    this.state = { orders: [], modified: false };
+    this.handleStateChange = this.handleStateChange.bind(this);
   }
 
   async componentDidMount() {
     await this.fetchorders();
+  }
+
+  handleStateChange() {
+    this.setState({ modified: true });
   }
 
   async fetchorders() {
@@ -30,11 +35,14 @@ class OrderList extends Component {
       .catch(err => console.log(err));
   }
 
+  async componentDidUpdate() {
+    await this.fetchorders();
+  }
+
   render() {
-    var count = 0;
     const rows = this.state.orders.map((order, index) => (
       <TableRow key={index}>
-        <TableCell>{count + 1}</TableCell>
+        <TableCell>{order.order_ID}</TableCell>
         <TableCell align="right">
           {order.creation_time[0]}/{order.creation_time[1]}/
           {order.creation_time[2]}
@@ -53,13 +61,10 @@ class OrderList extends Component {
           </Link>
         </TableCell>
         <TableCell align="right" width="20px">
-          {/* <EditIcon
-            style={{ color: "darkblue" }}
-            onClick={() => this.handleEdit()}
-          /> */}
           <ModifyOrder
-            processed={"Pending Confirmation"}
-            fetchorders={this.fetchorders}
+            processed={order.processed}
+            orderID={order.order_ID}
+            track={this.handleStateChange}
           />
         </TableCell>
       </TableRow>

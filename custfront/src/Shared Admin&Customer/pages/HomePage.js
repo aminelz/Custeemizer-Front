@@ -1,6 +1,6 @@
 import React from "react";
-import Tshirtlist from "../components/Tshirt/TshirtList";
-import Header from "../components/Common/Header";
+import Tshirtlist from "../../CustomerSide/Tshirt Management/TshirtList";
+import Header from "../../CustomerSide/Common/Header";
 
 function HomePage() {
   return (

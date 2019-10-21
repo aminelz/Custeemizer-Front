@@ -1,7 +1,7 @@
 import React from "react";
-import TshirtCategory from "../components/Tshirt/TshirtCategory";
-import Header from "../components/Common/Header";
-import TshirtFullDetails from "../components/Tshirt/TshirtFullDetails";
+import TshirtCategory from "../../CustomerSide/Tshirt Management/TshirtCategory";
+import Header from "../../CustomerSide/Common/Header";
+import TshirtFullDetails from "../../CustomerSide/Tshirt Management/TshirtFullDetails";
 
 function TshirtPage(props) {
   const returnAll = (

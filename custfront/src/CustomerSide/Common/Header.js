@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import Nav from "./Nav";
 import ShoppingCartIcon from "@material-ui/icons/ShoppingCart";
 import { withRouter } from "react-router-dom";
-import AddCustomer from "../Customer/AddCustomer";
+import AddCustomer from "../Profile Management/AddCustomer";
 
 const style = {
   backgroundColor: "rgb(0,0,0)",

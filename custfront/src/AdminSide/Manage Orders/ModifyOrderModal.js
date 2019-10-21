@@ -52,8 +52,14 @@ function ModifyOrderModal(props) {
     setProcess(event.target.value);
   };
 
-  const handleSubmit = event => {
-    console.log("Submit Clicked");
+  const handleSubmit = async event => {
+    event.preventDefault();
+    var modifiedOrder = {
+      processed: process
+    };
+    props.modifyOrder(props.orderID, modifiedOrder);
+    props.closemodal();
+    props.track();
   };
 
   return (

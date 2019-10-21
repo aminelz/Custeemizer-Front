@@ -1,18 +1,8 @@
 import React, { Component } from "react";
 import { withRouter } from "react-router-dom";
 import SkyLight from "react-skylight";
-import SignUpPage from "../../pages/SignUpPage";
 
-var myBigGreenDialog = {
-  backgroundColor: "#00897B",
-  color: "#ffffff",
-  width: "70%",
-  height: "650px",
-  marginTop: "-300px",
-  marginLeft: "-35%"
-};
-
-class AddCustomer extends Component {
+class AddAdmin extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -21,17 +11,6 @@ class AddCustomer extends Component {
       email: "",
       password: "",
       admin: true,
-      birth_date: "",
-      phone_number: "",
-      cc_number: "",
-      cc_firstname: "",
-      cc_lastname: "",
-      cc_type: "",
-      cc_address: "",
-      street: "",
-      zipcode: "",
-      city: "",
-      country: "",
       response: null,
       errors: []
     };
@@ -82,17 +61,60 @@ class AddCustomer extends Component {
       this.props.addAdmin(newAdmin);
       this.refs.addDialog.hide();
     }
+    this.props.track();
   };
 
   render() {
     return (
       <div>
-        <SkyLight
-          dialogStyles={myBigGreenDialog}
-          hideOnOverlayClicked
-          ref="addDialog"
-        >
-          <SignUpPage />
+        <SkyLight hideOnOverlayClicked ref="addDialog">
+          <h3>New Admin</h3>
+          <form>
+            {this.state.errors.map(error => (
+              <p syle={{ color: "red" }} key={error}>
+                Error: {error}
+              </p>
+            ))}
+            <input
+              type="text"
+              placeholder="First Name"
+              name="firstname"
+              required
+              onChange={this.handleChange}
+            />
+            <br />
+            <input
+              type="text"
+              placeholder="Last Name"
+              name="lastname"
+              required
+              onChange={this.handleChange}
+            />
+            <br />
+            <input
+              type="email"
+              placeholder="Email"
+              name="email"
+              required
+              onChange={this.handleChange}
+            />
+            <br />
+            <input
+              type="password"
+              placeholder="Password"
+              name="password"
+              required
+              onChange={this.handleChange}
+            />
+            <br />
+            <select>
+              <option value="true" onChange={this.handleChange}>
+                Admin
+              </option>
+            </select>
+            <br />
+            <button onClick={this.handleSubmit}>Save</button>
+          </form>
         </SkyLight>
         <div>
           <button
@@ -107,4 +129,4 @@ class AddCustomer extends Component {
   }
 }
 
-export default withRouter(AddCustomer);
+export default withRouter(AddAdmin);

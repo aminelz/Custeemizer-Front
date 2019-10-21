@@ -1,6 +1,6 @@
 import React from "react";
-import Cartlist from "../components/Cart&Order/CartList";
-import Header from "../components/Common/Header";
+import Cartlist from "../../Shared Admin&Customer/Cart&Order/CartList";
+import Header from "../../CustomerSide/Common/Header";
 
 function CartPage() {
   return (

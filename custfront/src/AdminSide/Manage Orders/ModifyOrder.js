@@ -6,42 +6,46 @@ import ModifyOrderModal from "./ModifyOrderModal";
 class ModifyOrder extends Component {
   constructor(props) {
     super(props);
-    this.state = { processed: "" };
+    this.state = { processed: "", orderID: props.orderID };
   }
 
-  async modifyorder(newvalue) {
-    await fetch("http://localhost:8080/api/orders", {
-      method: "PUT",
+  async modifyorder(order, newvalue) {
+    await fetch(`http://localhost:8080/api/orders/${order}`, {
+      method: "PATCH",
       headers: {
         "Content-Type": "application/json"
       },
       body: JSON.stringify(newvalue)
     })
-      .then(res => this.props.fetchorders())
+      .then(res => this.fetchorders)
       .catch(err => console.error(err));
-    window.location.reload();
   }
 
-  handleChange = event => {
-    this.setState({ [event.target.name]: event.target.value });
-  };
+  async fetchorders() {
+    const url = "http://localhost:8080/Orders";
+    await fetch(url)
+      .then(async ans => await ans.json())
+      .then(data => {
+        this.setState({ orders: data });
+      })
+      .catch(err => console.log(err));
+  }
 
-  handleSubmit = async event => {
-    event.preventDefault();
-    var modifiedOrder = {
-      processed: this.state.processed
-    };
-    this.props.addAdmin(modifiedOrder);
+  closemodal() {
     this.refs.addDialog.hide();
-  };
+  }
 
   render() {
     return (
       <div style={{ alignItems: "left" }}>
         <SkyLight hideOnOverlayClicked ref="addDialog">
           <ModifyOrderModal
+            modifyOrder={this.modifyorder}
             old_processed={this.props.processed}
-            modifyOrder={this.modifyorder()}
+            orderID={this.props.orderID}
+            closemodal={this.closemodal.bind(this)}
+            refs={this.refs}
+            track={this.props.track}
           />
         </SkyLight>
         <div>

@@ -1,7 +1,7 @@
 import React from "react";
-import Header from "../components/Common/Header";
-import OrderList from "../components/Cart&Order/OrderList";
-import OrderDetails from "../components/Cart&Order/OrderDetails";
+import Header from "../../CustomerSide/Common/Header";
+import OrderList from "../../AdminSide/Manage Orders/OrderList";
+import OrderDetails from "../../Shared Admin&Customer/Cart&Order/OrderDetails";
 
 function OrdersPage({ match }) {
   const allorders = (

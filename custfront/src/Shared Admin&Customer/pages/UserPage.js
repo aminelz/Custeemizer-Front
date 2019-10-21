@@ -1,8 +1,8 @@
 import React from "react";
-import Customerlist from "../components/Customer/CustomerList";
-import Header from "../components/Common/Header";
-import Adminlist from "../components/Admin/AdminList";
-import CustomerInfo from "../components/Customer/CustomerInfo";
+import Customerlist from "../../AdminSide/Manage Profiles/CustomerList";
+import Header from "../../CustomerSide/Common/Header";
+import Adminlist from "../../AdminSide/Manage Profiles/AdminList";
+import CustomerInfo from "../../CustomerSide/Profile Management/CustomerInfo";
 
 function UserPage({ match }) {
   const returnadmin = (
