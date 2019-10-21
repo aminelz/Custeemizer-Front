@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import Nav from "./Nav";
 import ShoppingCartIcon from "@material-ui/icons/ShoppingCart";
 import { withRouter } from "react-router-dom";
+import AddCustomer from "../Customer/AddCustomer";
 
 const style = {
   backgroundColor: "rgb(0,0,0)",
@@ -46,6 +47,7 @@ class Header extends Component {
             <Link to="/Cart" style={{ color: "white" }}>
               Total Price : {this.state.cart.total} MAD{" "}
             </Link>
+            <AddCustomer align="right" />
           </p>
         </div>
         <Nav />

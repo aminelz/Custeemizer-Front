@@ -1,7 +1,5 @@
 import React, { Component } from "react";
 import { withRouter, Link } from "react-router-dom";
-import EditIcon from "@material-ui/icons/Edit";
-import DoneIcon from "@material-ui/icons/Done";
 import VisibilityIcon from "@material-ui/icons/Visibility";
 import {
   Table,
@@ -10,6 +8,7 @@ import {
   TableRow,
   TableHead
 } from "@material-ui/core";
+import ModifyOrder from "./ModifyOrder";
 
 class OrderList extends Component {
   constructor(props) {
@@ -30,11 +29,12 @@ class OrderList extends Component {
       })
       .catch(err => console.log(err));
   }
+
   render() {
     var count = 0;
     const rows = this.state.orders.map((order, index) => (
       <TableRow key={index}>
-        <TableCell> {count + 1} </TableCell>
+        <TableCell>{count + 1}</TableCell>
         <TableCell align="right">
           {order.creation_time[0]}/{order.creation_time[1]}/
           {order.creation_time[2]}
@@ -53,7 +53,14 @@ class OrderList extends Component {
           </Link>
         </TableCell>
         <TableCell align="right" width="20px">
-          <EditIcon />
+          {/* <EditIcon
+            style={{ color: "darkblue" }}
+            onClick={() => this.handleEdit()}
+          /> */}
+          <ModifyOrder
+            processed={"Pending Confirmation"}
+            fetchorders={this.fetchorders}
+          />
         </TableCell>
       </TableRow>
     ));
@@ -68,7 +75,6 @@ class OrderList extends Component {
                 <TableCell align="center">Creation Date</TableCell>
                 <TableCell align="center">Total Price (MAD)</TableCell>
                 <TableCell align="center">Processing (?) </TableCell>
-                <TableCell></TableCell>
                 <TableCell></TableCell>
               </TableRow>
             </TableHead>

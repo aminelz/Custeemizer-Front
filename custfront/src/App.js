@@ -13,6 +13,7 @@ import HomePage from "./pages/HomePage";
 import OrdersPage from "./pages/OrdersPage";
 import UserPage from "./pages/UserPage";
 import TshirtPage from "./pages/TshirtPage";
+import SignupPage from "./pages/SignUpPage";
 
 function App() {
   return (
@@ -28,6 +29,7 @@ function App() {
         <Route path="/Tshirts/:sex" component={withRouter(TshirtPage)} />
         <Route path="/Tshirt/:id" component={withRouter(TshirtPage)} />
         <Route path="/Order/:id" component={OrdersPage} />
+        <Route path="/Signup" component={SignupPage} />
       </Switch>
     </Router>
   );
