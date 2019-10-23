@@ -33,6 +33,7 @@ class ModifyOrder extends Component {
 
   closemodal() {
     this.refs.addDialog.hide();
+    window.location.reload();
   }
 
   render() {
@@ -60,37 +61,3 @@ class ModifyOrder extends Component {
 }
 
 export default withRouter(ModifyOrder);
-
-{
-  /* <h3>Modify Order Processing</h3>
-          <form>
-            <select>
-              <option value="Order Received" onChange={this.handleChange}>
-                Order Received
-              </option>
-              <option value="Pending Confirmation" onChange={this.handleChange}>
-                Pending Confirmation
-              </option>
-              <option value="Order Confirmed" onChange={this.handleChange}>
-                Order Confirmed
-              </option>
-              <option value="Pending Payment" onChange={this.handleChange}>
-                Pending Payment
-              </option>
-              <option value="Preparing Order" onChange={this.handleChange}>
-                Preparing Order
-              </option>
-              <option value="Pending Shipment" onChange={this.handleChange}>
-                Pending Shipment
-              </option>
-              <option value="Shipped" onChange={this.handleChange}>
-                Shipped
-              </option>
-              <option value="Delivered" onChange={this.handleChange}>
-                Delivered
-              </option>
-            </select>
-            <br />
-            <DoneIcon onClick={this.handleSubmit} />
-          </form> */
-}

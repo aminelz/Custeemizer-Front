@@ -53,11 +53,13 @@ class Customerlist extends Component {
         <div>
           <Table>
             <TableHead style={{ fontStyle: "italic" }}>
-              <TableCell align="left"> ID </TableCell>
-              <TableCell align="center"> First Name </TableCell>
-              <TableCell align="center"> Last Name</TableCell>
-              <TableCell align="center"> Email </TableCell>
-              <TableCell align="center"> Password</TableCell>
+              <TableRow>
+                <TableCell align="left"> ID </TableCell>
+                <TableCell align="center"> First Name </TableCell>
+                <TableCell align="center"> Last Name</TableCell>
+                <TableCell align="center"> Email </TableCell>
+                <TableCell align="center"> Password</TableCell>
+              </TableRow>
             </TableHead>
             <TableBody>{tableRows}</TableBody>
           </Table>

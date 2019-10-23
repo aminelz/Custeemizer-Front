@@ -13,7 +13,7 @@ import ModifyOrder from "./ModifyOrder";
 class OrderList extends Component {
   constructor(props) {
     super(props);
-    this.state = { orders: [], modified: false };
+    this.state = { orders: [], modified: false, oldstate: false };
     this.handleStateChange = this.handleStateChange.bind(this);
   }
 
@@ -23,6 +23,10 @@ class OrderList extends Component {
 
   handleStateChange() {
     this.setState({ modified: true });
+  }
+
+  testing() {
+    this.setState({ oldstate: false });
   }
 
   async fetchorders() {
@@ -35,9 +39,16 @@ class OrderList extends Component {
       .catch(err => console.log(err));
   }
 
-  async componentDidUpdate() {
-    await this.fetchorders();
-  }
+  // async componentDidUpdate() {
+  //   if (this.state.modified !== this.state.oldstate) {
+  //     this.setState({ modified: false }, () => {
+  //       this.fetchorders();
+  //     });
+
+  //     // await this.fetchorders();
+  //     // console.log("inside if modified: ", this.state.modified);
+  //   }
+  // }
 
   render() {
     const rows = this.state.orders.map((order, index) => (

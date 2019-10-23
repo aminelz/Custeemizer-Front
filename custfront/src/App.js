@@ -13,7 +13,7 @@ import HomePage from "./Shared Admin&Customer/pages/HomePage";
 import OrdersPage from "./Shared Admin&Customer/pages/OrdersPage";
 import UserPage from "./Shared Admin&Customer/pages/UserPage";
 import TshirtPage from "./Shared Admin&Customer/pages/TshirtPage";
-import SignupPage from "./Shared Admin&Customer/pages/SignUpPage";
+// import SignupPage from "./Shared Admin&Customer/pages/SignUpPage";
 
 function App() {
   return (
@@ -29,7 +29,7 @@ function App() {
         <Route path="/Tshirts/:sex" component={withRouter(TshirtPage)} />
         <Route path="/Tshirt/:id" component={withRouter(TshirtPage)} />
         <Route path="/Order/:id" component={OrdersPage} />
-        <Route path="/Signup" component={SignupPage} />
+        {/* <Route path="/Signup" component={SignupPage} /> */}
       </Switch>
     </Router>
   );

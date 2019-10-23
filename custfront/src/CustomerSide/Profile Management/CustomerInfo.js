@@ -89,14 +89,16 @@ class CustomerInfo extends Component {
           <h2 align="center"> Personal Information</h2>
           <Table>
             <TableHead style={{ fontStyle: "italic" }}>
-              <TableCell align="left"> Customer_ID </TableCell>
-              <TableCell align="center"> User_ID </TableCell>
-              <TableCell align="center"> First Name </TableCell>
-              <TableCell align="center"> Last Name </TableCell>
-              <TableCell align="center"> Email </TableCell>
-              <TableCell align="center"> Password </TableCell>
-              <TableCell align="center"> Birth Date </TableCell>
-              <TableCell align="center"> Phone </TableCell>
+              <TableRow>
+                <TableCell align="left"> Customer_ID </TableCell>
+                <TableCell align="center"> User_ID </TableCell>
+                <TableCell align="center"> First Name </TableCell>
+                <TableCell align="center"> Last Name </TableCell>
+                <TableCell align="center"> Email </TableCell>
+                <TableCell align="center"> Password </TableCell>
+                <TableCell align="center"> Birth Date </TableCell>
+                <TableCell align="center"> Phone </TableCell>
+              </TableRow>
             </TableHead>
             <TableBody>{UserRows}</TableBody>
           </Table>
@@ -104,10 +106,12 @@ class CustomerInfo extends Component {
           <h2 align="center"> Shipping Information</h2>
           <Table>
             <TableHead style={{ fontStyle: "italic" }}>
-              <TableCell align="center">Street</TableCell>
-              <TableCell align="center">City</TableCell>
-              <TableCell align="center">Zipcode</TableCell>
-              <TableCell align="center">Country</TableCell>
+              <TableRow>
+                <TableCell align="center">Street</TableCell>
+                <TableCell align="center">City</TableCell>
+                <TableCell align="center">Zipcode</TableCell>
+                <TableCell align="center">Country</TableCell>
+              </TableRow>
             </TableHead>
             <TableBody>{ShippingRows}</TableBody>
           </Table>
@@ -115,11 +119,13 @@ class CustomerInfo extends Component {
           <h2 align="center"> Payment Information</h2>
           <Table>
             <TableHead style={{ fontStyle: "italic" }}>
-              <TableCell align="center">CreditCard Number</TableCell>
-              <TableCell align="center">Type</TableCell>
-              <TableCell align="center">First Name</TableCell>
-              <TableCell align="center">Last Name</TableCell>
-              <TableCell align="center">Address</TableCell>
+              <TableRow>
+                <TableCell align="center">CreditCard Number</TableCell>
+                <TableCell align="center">Type</TableCell>
+                <TableCell align="center">First Name</TableCell>
+                <TableCell align="center">Last Name</TableCell>
+                <TableCell align="center">Address</TableCell>
+              </TableRow>
             </TableHead>
             <TableBody>{PaymentRows}</TableBody>
           </Table>

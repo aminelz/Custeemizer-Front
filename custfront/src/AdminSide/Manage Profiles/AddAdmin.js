@@ -62,6 +62,7 @@ class AddAdmin extends Component {
       this.refs.addDialog.hide();
     }
     this.props.track();
+    window.location.reload();
   };
 
   render() {
