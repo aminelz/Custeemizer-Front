@@ -13,6 +13,7 @@ import HomePage from "./Shared Admin&Customer/pages/HomePage";
 import OrdersPage from "./Shared Admin&Customer/pages/OrdersPage";
 import UserPage from "./Shared Admin&Customer/pages/UserPage";
 import TshirtPage from "./Shared Admin&Customer/pages/TshirtPage";
+import CustomerDetails from "./CustomerSide/Profile Management/CustomerDetails";
 // import SignupPage from "./Shared Admin&Customer/pages/SignUpPage";
 
 function App() {
@@ -29,7 +30,7 @@ function App() {
         <Route path="/Tshirts/:sex" component={withRouter(TshirtPage)} />
         <Route path="/Tshirt/:id" component={withRouter(TshirtPage)} />
         <Route path="/Order/:id" component={OrdersPage} />
-        {/* <Route path="/Signup" component={SignupPage} /> */}
+        <Route path="/Signup" component={CustomerDetails} />
       </Switch>
     </Router>
   );

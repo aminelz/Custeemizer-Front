@@ -35,31 +35,23 @@ class CustomerInfo extends Component {
     const UserRows = (
       <TableRow>
         <TableCell align="left">
-          {" "}
-          {this.props.location.myuser.user.user_ID}{" "}
+          {this.props.location.myuser.user.user_ID}
         </TableCell>
         <TableCell align="right"> {this.state.customer.customer_ID} </TableCell>
         <TableCell align="right">
-          {" "}
-          {this.props.location.myuser.user.first_name}{" "}
+          {this.props.location.myuser.user.first_name}
         </TableCell>
         <TableCell align="right">
-          {" "}
-          {this.props.location.myuser.user.last_name}{" "}
+          {this.props.location.myuser.user.last_name}
         </TableCell>
         <TableCell align="right">
-          {" "}
-          {this.props.location.myuser.user.email}{" "}
+          {this.props.location.myuser.user.email}
         </TableCell>
         <TableCell align="right">
-          {" "}
-          {this.props.location.myuser.user.password}{" "}
+          {this.props.location.myuser.user.password}
         </TableCell>
         <TableCell align="right"> {this.state.customer.birth_date} </TableCell>
-        <TableCell align="right">
-          {" "}
-          {this.state.customer.phone_number}{" "}
-        </TableCell>
+        <TableCell align="right">{this.state.customer.phone_number} </TableCell>
       </TableRow>
     );
     const ShippingRows = (
@@ -74,10 +66,7 @@ class CustomerInfo extends Component {
       <TableRow>
         <TableCell align="center"> {this.state.payment.cc_number} </TableCell>
         <TableCell align="center"> {this.state.payment.cc_type} </TableCell>
-        <TableCell align="center">
-          {" "}
-          {this.state.payment.cc_firstname}{" "}
-        </TableCell>
+        <TableCell align="center">{this.state.payment.cc_firstname}</TableCell>
         <TableCell align="center"> {this.state.payment.cc_lastname} </TableCell>
         <TableCell align="center"> {this.state.payment.cc_address} </TableCell>
       </TableRow>

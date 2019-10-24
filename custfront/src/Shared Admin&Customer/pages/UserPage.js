@@ -2,7 +2,7 @@ import React from "react";
 import Customerlist from "../../AdminSide/Manage Profiles/CustomerList";
 import Header from "../../CustomerSide/Common/Header";
 import Adminlist from "../../AdminSide/Manage Profiles/AdminList";
-import CustomerInfo from "../../CustomerSide/Profile Management/CustomerInfo";
+import CustomerInfo from "../../AdminSide/Manage Profiles/CustomerInfo";
 
 function UserPage({ match }) {
   const returnadmin = (
