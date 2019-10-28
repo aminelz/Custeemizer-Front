@@ -42,6 +42,10 @@ class Header extends Component {
       <Fragment>
         <div style={style}>
           <p style={textstyle}>
+            <Link to="/MyAccount" style={{ color: "white" }}>
+              {" "}
+              My Account
+            </Link>
             <ShoppingCartIcon />
             <Link to="/Cart" style={{ color: "white" }}>
               Total Price : {this.state.cart.total} MAD{" "}

@@ -65,7 +65,6 @@ class Adminlist extends Component {
       <div>
         <div>
           <AddAdmin
-            align="right"
             addAdmin={this.addAdmin}
             fetchadmins={this.fetchadmins}
             track={this.handleStateChange}
