@@ -8,9 +8,11 @@ import CssBaseline from "@material-ui/core/CssBaseline";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 import Container from "@material-ui/core/Container";
-import { TextField } from "@material-ui/core";
+// import { TextField, FormControl, Select, MenuItem } from "@material-ui/core";
+import TextField from "@material-ui/core/TextField";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
+import swal from "sweetalert";
 
 const useStyles = theme => ({
   "@global": {
@@ -45,14 +47,78 @@ const useStyles = theme => ({
 class ModifyShippingInfoModal extends Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      street: props.shipping.street,
+      city: props.shipping.city,
+      zipcode: props.shipping.zipcode,
+      country: props.shipping.country,
+      id: props.shipping.shipping_ID
+    };
   }
 
-  handleChange = event => {
-    this.setState({ [event.target.name]: event.target.value });
-  };
+  handleChange(e) {
+    this.setState({ [e.target.name]: e.target.value });
+  }
 
-  async handleSubmit(event) {}
+  async validatemodification() {
+    var errors = null;
+    if (
+      this.state.city.length === 0 ||
+      this.state.zipcode.length === 0 ||
+      this.state.country.length === 0 ||
+      this.state.street.length === 0
+    ) {
+      errors = "You did not fill all required fields !";
+    } else if (this.state.zipcode.length !== 5) {
+      errors = "Zipcode should be 5 digits long !";
+    } else if (
+      this.state.city === this.props.shipping.city &&
+      this.state.zipcode === this.props.shipping.zipcode &&
+      this.state.country === this.props.shipping.country &&
+      this.state.street === this.props.shipping.street
+    ) {
+      errors = "Nothing has been modified !";
+    }
+    return errors;
+  }
+
+  async modifyshipping(id, newvalue) {
+    await fetch(`http://localhost:8080/api/shippingInfoes/${id}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(newvalue)
+    })
+      .then(res => this.props.fetchcustomer(this.props.shipping.customer))
+      .catch(err => swal("Error Updating", err, "error"));
+  }
+
+  handleSubmit = async event => {
+    event.preventDefault();
+    const errors = await this.validatemodification();
+    if (errors !== null) {
+      await swal("Oops!", errors, "error");
+      return;
+    } else if (errors === null) {
+      console.log("No Errors");
+      var modifiedShipping = {
+        street: this.state.street,
+        city: this.state.city,
+        zipcode: this.state.zipcode,
+        country: this.state.country
+      };
+      this.modifyshipping(this.state.id, modifiedShipping);
+      swal(
+        "Successfully Modified",
+        "Your shipping information has been updated !",
+        "success"
+      ).then(function() {
+        window.location.reload();
+      });
+      this.refs.addDialog.hide();
+    }
+  };
 
   render() {
     const { classes } = this.props;
@@ -68,66 +134,86 @@ class ModifyShippingInfoModal extends Component {
               <Typography component="h1" variant="h5">
                 Modify Account Information
               </Typography>
-              <form className={classes.form}>
+              <form>
                 <Grid container direction="row">
-                  <Grid item>
+                  <Grid item sm={12}>
                     <TextField
-                      id="t_firstname"
+                      id="t_street"
+                      label="Street"
+                      required
+                      // style={styles.TextField.largetext}
+                      style={{ width: "78%" }}
                       className={classes.textField}
-                      label="First Name"
-                      value={this.props.user[3] + ""}
+                      value={this.state.street}
                       margin="normal"
                       variant="outlined"
-                      onChangeText={this.handleChange}
-                    />
-                    <TextField
-                      id="t_lastname"
-                      label="Last Name"
-                      className={classes.textField}
-                      value={this.props.user[4] + ""}
-                      margin="normal"
-                      variant="outlined"
-                      onChange={this.handleChange.bind(this)}
+                      fullWidth
+                      onChange={e => this.setState({ street: e.target.value })}
                     />
                   </Grid>
                   <Grid item>
                     <TextField
-                      id="t_email"
-                      label="Email"
+                      id="t_city"
+                      // style={styles.TextField}
+                      label="City"
+                      required
                       className={classes.textField}
-                      value={this.props.user[2] + ""}
+                      value={this.state.city}
                       margin="normal"
                       variant="outlined"
-                      onChange={this.handleChange.bind(this)}
+                      onChange={e => this.setState({ city: e.target.value })}
+                    />
+                    <TextField
+                      id="t_zipcode"
+                      // style={styles.TextField}
+                      label="ZipCode"
+                      required
+                      className={classes.textField}
+                      value={this.state.zipcode}
+                      margin="normal"
+                      variant="outlined"
+                      type="int"
+                      onChange={e =>
+                        this.setState({
+                          zipcode: Math.max(0, parseInt(e.target.value))
+                            .toString()
+                            .slice(0, 5)
+                        })
+                      }
                     />
                   </Grid>
-                  <Grid item>
+                  <Grid item sm>
                     <TextField
-                      id="t_date"
-                      label="Birth Date"
+                      id="t_country"
+                      // style={styles.TextField}
+                      label="Country"
+                      required
                       className={classes.textField}
-                      value={this.props.customer.birth_date + ""}
+                      value={this.state.country}
                       margin="normal"
                       variant="outlined"
-                      onChange={this.handleChange.bind(this)}
+                      onChange={e => this.setState({ country: e.target.value })}
                     />
-                    <TextField
-                      id="t_phone"
-                      label="Phone Number"
-                      className={classes.textField}
-                      value={this.props.customer.phone_number + ""}
-                      margin="normal"
-                      variant="outlined"
-                      onChange={this.handleChange.bind(this)}
-                    />
+                    {/* <Select
+                      inputProps={{
+                        name: "country",
+                        id: "country_id"
+                      }}
+                      name="country"
+                      label="Country"
+                      value="Morocco"
+                    >
+                      <MenuItem value="Morocco">Morocco</MenuItem>
+                    </Select> */}
                   </Grid>
                 </Grid>
                 <Button
-                  type="submit"
+                  //   type="submit"
                   fullWidth
                   variant="contained"
                   color="primary"
                   className={classes.submit}
+                  onClick={this.handleSubmit}
                 >
                   Save Modifications
                 </Button>

@@ -43,7 +43,6 @@ class Header extends Component {
         <div style={style}>
           <p style={textstyle}>
             <Link to="/MyAccount" style={{ color: "white" }}>
-              {" "}
               My Account
             </Link>
             <ShoppingCartIcon />

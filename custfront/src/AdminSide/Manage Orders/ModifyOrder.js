@@ -3,6 +3,7 @@ import { withRouter } from "react-router-dom";
 import SkyLight from "react-skylight";
 import EditIcon from "@material-ui/icons/Edit";
 import ModifyOrderModal from "./ModifyOrderModal";
+
 class ModifyOrder extends Component {
   constructor(props) {
     super(props);

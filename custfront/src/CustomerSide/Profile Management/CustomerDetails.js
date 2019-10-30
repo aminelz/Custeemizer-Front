@@ -92,7 +92,7 @@ class CustomerDetails extends Component {
       payment: [],
       user: [],
       disabled: false,
-      choice: "Profile"
+      choice: "Home"
     };
   }
   handleClick(x) {
@@ -100,12 +100,12 @@ class CustomerDetails extends Component {
   }
 
   async componentDidMount() {
-    await this.fetchcustomer();
-    await this.fetchuser();
+    await this.fetchcustomer(4);
+    await this.fetchuser(4);
   }
 
-  async fetchcustomer() {
-    const url = "http://localhost:8080/Customer/4";
+  async fetchcustomer(id) {
+    const url = `http://localhost:8080/Customer/${id}`;
     await fetch(url)
       .then(async res => await res.json())
       .then(data => {
@@ -117,8 +117,8 @@ class CustomerDetails extends Component {
       })
       .catch(err => console.log(err));
   }
-  async fetchuser() {
-    const url = "http://localhost:8080/UserCustomer/4";
+  async fetchuser(id) {
+    const url = `http://localhost:8080/UserCustomer/${id}`;
     await fetch(url)
       .then(async res => await res.json())
       .then(data => {
@@ -132,6 +132,29 @@ class CustomerDetails extends Component {
     const { classes } = this.props;
     var choice;
 
+    const home = (
+      <Grid container style={styles.Grid}>
+        <Grid item sm={6} style={styles.Grid}>
+          <Paper style={styles.Paper}>
+            <Grid container>
+              <Grid item sm={11}>
+                <Typography
+                  variant="subtitle1"
+                  style={{ marginBottom: "20px" }}
+                >
+                  Account Management
+                </Typography>
+              </Grid>
+            </Grid>
+            <p>
+              {" "}
+              Welcome on your account management portal, navigate using the menu
+              to view and modify your personal information
+            </p>
+          </Paper>
+        </Grid>
+      </Grid>
+    );
     const account = (
       <Grid container style={styles.Grid}>
         <Grid item sm={6} style={styles.Grid}>
@@ -149,6 +172,7 @@ class CustomerDetails extends Component {
                 <ModifyPersonalInfoModal
                   user={this.state.user}
                   customer={this.state.customer}
+                  fetchcustomer={this.fetchcustomer}
                 />
               </Grid>
             </Grid>
@@ -299,8 +323,8 @@ class CustomerDetails extends Component {
               </Grid>
               <Grid item sm={1}>
                 <ModifyShippingInfoModal
-                  user={this.state.user}
-                  customer={this.state.customer}
+                  shipping={this.state.shipping}
+                  fetchcustomer={this.fetchcustomer}
                 />
               </Grid>
             </Grid>
@@ -375,8 +399,8 @@ class CustomerDetails extends Component {
               </Grid>
               <Grid item sm={1}>
                 <ModifyPaymentInfoModal
-                  user={this.state.user}
-                  customer={this.state.customer}
+                  payment={this.state.payment}
+                  fetchcustomer={this.fetchcustomer}
                 />
               </Grid>
             </Grid>
@@ -418,8 +442,9 @@ class CustomerDetails extends Component {
       choice = shipping;
     } else if (this.state.choice === "Payment") {
       choice = payment;
+    } else if (this.state.choice === "Home") {
+      choice = home;
     }
-
     return (
       <div>
         <div>
