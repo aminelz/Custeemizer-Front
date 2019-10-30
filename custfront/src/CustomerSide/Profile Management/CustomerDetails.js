@@ -14,6 +14,7 @@ import "react-credit-cards/es/styles-compiled.css";
 import ModifyPersonalInfoModal from "./ModifyPersonalInfoModal";
 import ModifyPaymentInfoModal from "./ModifyPaymentInfoModal";
 import ModifyShippingInfoModal from "./ModifyShippingInfoModal";
+import swal from "sweetalert";
 
 const styles = {
   Paper: {
@@ -92,7 +93,10 @@ class CustomerDetails extends Component {
       payment: [],
       user: [],
       disabled: false,
-      choice: "Home"
+      choice: "Home",
+      current_password: "",
+      new_password: "",
+      new_password2: ""
     };
   }
   handleClick(x) {
@@ -125,6 +129,93 @@ class CustomerDetails extends Component {
         this.setState({ user: data[0] });
       })
       .catch(err => console.log(err));
+  }
+
+  emptyfields() {
+    this.setState({
+      current_password: "",
+      new_password: "",
+      new_password2: ""
+    });
+  }
+
+  async validatepassword() {
+    var errors = null;
+    if (
+      this.state.current_password.length === 0 ||
+      this.state.new_password.length === 0 ||
+      this.state.new_password2.length === 0
+    ) {
+      errors = "You have to fill all three fields to change your password !";
+      this.emptyfields();
+      return errors;
+    } else {
+      if (
+        this.state.new_password.length < 6 ||
+        this.state.new_password2.length < 6
+      ) {
+        errors = "Your password should at least be 6 characters long";
+        this.emptyfields();
+        return errors;
+      } else {
+        if (this.state.new_password !== this.state.new_password2) {
+          errors =
+            "New passwords not matching ! Please re-enter your new password";
+          this.emptyfields();
+          return errors;
+        } else {
+          var bcrypt = require("bcryptjs");
+          bcrypt.compare(
+            this.state.current_password,
+            this.state.user[5],
+            (err, res) => {
+              if (res === false) {
+                swal(
+                  "Oops!",
+                  "The password your entered does not match with your old saved password !",
+                  "error"
+                ).then(this.emptyfields());
+              }
+            }
+          );
+          return errors;
+        }
+      }
+    }
+  }
+
+  async patchpassword(id, newvalue) {
+    await fetch(`http://localhost:8080/api/endUsers/${id}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(newvalue)
+    })
+      .then(res => this.props.fetchuser())
+      .catch(err => swal("Error Updating", err, "error"));
+  }
+
+  async modifypassword() {
+    var error = await this.validatepassword();
+    if (error !== null) {
+      swal("Oops!", error, "error");
+    } else {
+      var bcrypt = require("bcryptjs");
+      var hash = bcrypt.hashSync(this.state.new_password, 10);
+      console.log(hash, this.state.user[0]);
+      var modifiedpassword = {
+        password: hash
+      };
+      this.patchpassword(this.state.user[0], modifiedpassword);
+      swal(
+        "Successfully Modified",
+        "Your payment information has been updated !",
+        "success"
+      ).then(function() {
+        window.location.reload();
+      });
+    }
   }
 
   render() {
@@ -247,6 +338,9 @@ class CustomerDetails extends Component {
           <Paper style={styles.Paper}>
             <Typography variant="subtitle1" style={{ marginBottom: "20px" }}>
               Password
+              <span style={{ fontStyle: "italic" }}>
+                (Fill all fields to modify password)
+              </span>
             </Typography>
             <form>
               <Grid container direction="row">
@@ -256,11 +350,15 @@ class CustomerDetails extends Component {
                     label="Old Password"
                     // style={styles.TextField}
                     margin="normal"
+                    type="password"
                     disabled={dis}
-                    value={" "}
+                    value={this.state.current_password}
                     placeholder={"Enter old password"}
                     variant="outlined"
                     className={classes.textField}
+                    onChange={e =>
+                      this.setState({ current_password: e.target.value })
+                    }
                   />
                 </Grid>
                 <Grid item sm={6}></Grid>
@@ -270,11 +368,15 @@ class CustomerDetails extends Component {
                     // style={styles.TextField}
                     label="New Password"
                     margin="normal"
+                    type="password"
                     disabled={dis}
-                    value={" "}
+                    value={this.state.new_password}
                     placeholder={"Enter new password"}
                     variant="outlined"
                     className={classes.textField}
+                    onChange={e =>
+                      this.setState({ new_password: e.target.value })
+                    }
                   />
                 </Grid>
                 <Grid item>
@@ -282,18 +384,22 @@ class CustomerDetails extends Component {
                     id="t_newpassword2"
                     // style={styles.TextField}
                     label="New Password²"
+                    type="password"
                     margin="normal"
                     disabled={dis}
-                    value={" "}
+                    value={this.state.new_password2}
                     placeholder={"Re-enter new password"}
                     variant="outlined"
                     className={classes.textField}
+                    onChange={e =>
+                      this.setState({ new_password2: e.target.value })
+                    }
                   />
                   <Grid item>
                     <Grid container>
                       <Grid item sm={11}></Grid>
                       <Grid item sm={1}>
-                        <Button onClick={console.log("Save Clicked")}>
+                        <Button onClick={this.modifypassword.bind(this)}>
                           <Avatar className={classes.avatar}>
                             <SaveTwoToneIcon />
                           </Avatar>
