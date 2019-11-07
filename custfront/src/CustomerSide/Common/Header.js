@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import Nav from "./Nav";
 import ShoppingCartIcon from "@material-ui/icons/ShoppingCart";
 import { withRouter } from "react-router-dom";
+import AddCustomer from "../../CustomerSide/Profile Management/AddCustomer";
 
 const style = {
   backgroundColor: "rgb(0,0,0)",
@@ -42,6 +43,7 @@ class Header extends Component {
       <Fragment>
         <div style={style}>
           <p style={textstyle}>
+            <AddCustomer />
             <Link to="/MyAccount" style={{ color: "white" }}>
               My Account
             </Link>

@@ -80,6 +80,7 @@ class ModifyPersonalInfoModal extends Component {
 
   async validatemodification() {
     var errors = null;
+    const reg = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     await this.fetchemail();
     if (
       this.state.first_name.length === 0 ||
@@ -102,6 +103,8 @@ class ModifyPersonalInfoModal extends Component {
       this.state.birth_date === this.props.customer.birth_date
     ) {
       errors = "Nothing has been modified !";
+    } else if (reg.test(this.state.email) === false) {
+      errors = "Please enter a valid email address";
     }
     return errors;
   }
@@ -219,6 +222,7 @@ class ModifyPersonalInfoModal extends Component {
                       className={classes.textField}
                       value={this.state.email}
                       margin="normal"
+                      type="email"
                       variant="outlined"
                       onChange={e => this.setState({ email: e.target.value })}
                     />

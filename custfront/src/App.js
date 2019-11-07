@@ -14,6 +14,7 @@ import OrdersPage from "./Shared Admin&Customer/pages/OrdersPage";
 import UserPage from "./Shared Admin&Customer/pages/UserPage";
 import TshirtPage from "./Shared Admin&Customer/pages/TshirtPage";
 import ManageProfilePage from "./Shared Admin&Customer/pages/ManageProfilePage";
+// import AddCustomer from "./CustomerSide/Profile Management/AddCustomer";
 // import SignupPage from "./Shared Admin&Customer/pages/SignUpPage";
 
 function App() {
@@ -31,6 +32,7 @@ function App() {
         <Route path="/Tshirt/:id" component={withRouter(TshirtPage)} />
         <Route path="/Order/:id" component={OrdersPage} />
         <Route path="/MyAccount" component={ManageProfilePage} />
+        {/* <Route path="/Register" component={AddCustomer} /> */}
       </Switch>
     </Router>
   );
