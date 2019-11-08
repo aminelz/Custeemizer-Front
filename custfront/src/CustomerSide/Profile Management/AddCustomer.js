@@ -7,7 +7,7 @@ import CssBaseline from "@material-ui/core/CssBaseline";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 import Container from "@material-ui/core/Container";
-import { TextField, makeStyles } from "@material-ui/core";
+import { TextField, makeStyles, MenuItem } from "@material-ui/core";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
 import DateFnsUtils from "@date-io/date-fns";
@@ -26,6 +26,10 @@ import PermIdentityIcon from "@material-ui/icons/PermIdentity";
 import PaymentIcon from "@material-ui/icons/Payment";
 import LocalShippingIcon from "@material-ui/icons/LocalShipping";
 import clsx from "clsx";
+import Select from "@material-ui/core/Select";
+import AmericanExpress from "../../Shared Admin&Customer/Ressources/americanexpress.png";
+import Visa from "../../Shared Admin&Customer/Ressources/visa.png";
+import Mastercard from "../../Shared Admin&Customer/Ressources/mastercard.png";
 
 const useStyles = theme => ({
   "@global": {
@@ -90,7 +94,6 @@ class AddCustomerModal extends Component {
       user_last_name: "",
       user_email: "",
       user_password: "",
-      user_admin: false,
       user_id: "",
       customer_phone_number: "",
       customer_birth_date: "",
@@ -104,6 +107,8 @@ class AddCustomerModal extends Component {
       payment_cc_firstname: "",
       payment_cc_lastname: "",
       payment_cc_address: "",
+      payment_cc_type: "",
+      payment_cc_expiry: "",
       payment_id: "",
       password: "",
       password2: "",
@@ -142,6 +147,8 @@ class AddCustomerModal extends Component {
       payment_cc_firstname: "",
       payment_cc_lastname: "",
       payment_cc_address: "",
+      payment_cc_expiry: "",
+      payment_cc_type: "",
       payment_id: "",
       password: "",
       password2: ""
@@ -211,96 +218,78 @@ class AddCustomerModal extends Component {
   }
   validatepayment() {
     var errors = null;
+    var current_year = parseInt(
+      new Date()
+        .getFullYear()
+        .toString()
+        .substr(-2)
+    );
+    var current_month = parseInt((new Date().getMonth() + 1).toString());
+    var expiry_year = parseInt(this.state.payment_cc_expiry.substr(-2));
+    var expiry_month = parseInt(this.state.payment_cc_expiry.substr(0, 2));
+    var year_diff = expiry_year - current_year;
+    var month_diff = expiry_month - current_month;
     if (
       this.state.payment_cc_address.length === 0 ||
       this.state.payment_cc_firstname.length === 0 ||
       this.state.payment_cc_lastname.length === 0 ||
-      this.state.payment_cc_number.length === 0
+      this.state.payment_cc_number.length === 0 ||
+      this.state.payment_cc_expiry.length === 0 ||
+      this.state.payment_cc_type.length === 0
     ) {
       errors = "You did not fill all required fields !";
     } else if (this.state.payment_cc_number.length !== 16) {
       errors = "Your credit card number should contain 16 digits !";
+    } else if (this.state.payment_cc_expiry.charAt(2) !== "/") {
+      errors = "The expiry doesn't match the right format: MM/YY !";
+    } else if (expiry_month > 12 || expiry_month <= 0) {
+      errors = "Please enter a valid month";
+    } else if (year_diff < 0 || (year_diff === 0 && month_diff < 0)) {
+      errors = "You credit card is expired";
     }
-
     if (errors === null) {
-      swal(
-        "Registration Completed",
-        "You registered successfully !",
-        "success"
-      );
+      this.handleSubmit();
     } else {
       swal("Oops", errors, "error").then((errors = null));
     }
   }
 
-  async validateadd() {
-    var errors = null;
-    await this.fetchemail();
-    if (
-      this.state.first_name.length === 0 ||
-      this.state.last_name.length === 0 ||
-      this.state.email.length === 0 ||
-      this.state.phone_number.length === 0 ||
-      this.state.birth_date.length === 0
-    ) {
-      errors = "You did not fill all required fields !";
-    } else if (
-      this.state.response === true &&
-      this.state.email !== this.props.user[2]
-    ) {
-      errors = "The email you entered is already used !";
-    } else if (
-      this.state.first_name === this.props.user[3] &&
-      this.state.last_name === this.props.user[4] &&
-      this.state.email === this.props.user[2] &&
-      this.state.phone_number === this.props.customer.phone_number &&
-      this.state.birth_date === this.props.customer.birth_date
-    ) {
-      errors = "Nothing has been modified !";
-    }
-    return errors;
-  }
-
-  async addCustomer(newvalue) {
-    await fetch(`http://localhost:8080/api/customers`, {
-      method: "PATCH",
+  async addUser(value) {
+    await fetch("http://localhost:8080/Register", {
+      method: "POST",
       headers: {
         "Content-Type": "application/json"
       },
-      body: JSON.stringify(newvalue)
-    })
-      .then(res => this.props.fetchcustomer(this.props.customer.customer_ID))
-      .catch(err => swal("Error Updating", err, "error"));
+      body: JSON.stringify(value)
+    }).catch(err => console.error(err));
   }
 
-  handleSubmit = async event => {
-    event.preventDefault();
-    const errors = await this.validatemodification();
-    if (errors !== null) {
-      await swal("Oops!", errors, "error");
-      return;
-    } else if (errors === null) {
-      console.log(this.state.birth_date);
-      var modifiedCustomer = {
-        phone_number: this.state.phone_number,
-        birth_date: this.state.birth_date
-      };
-      var modifiedUser = {
-        first_name: this.state.first_name,
-        last_name: this.state.last_name,
-        email: this.state.email
-      };
-      this.modifyCustomer(this.state.customerid, modifiedCustomer);
-      swal(
-        "Successfully Added",
-        "Your account has been created !",
-        "success"
-      ).then(function() {
-        window.location.reload();
-      });
-      this.refs.addDialog.hide();
-    }
-  };
+  handleSubmit() {
+    var bcrypt = require("bcryptjs");
+    var hash = bcrypt.hashSync(this.state.password, 10);
+    var newuser = {
+      user_firstname: this.state.user_first_name,
+      user_lastname: this.state.user_last_name,
+      user_email: this.state.user_email,
+      user_password: hash,
+      customer_birthdate: this.state.customer_birth_date,
+      customer_phonenumber: this.state.customer_phone_number,
+      payment_number: this.state.payment_cc_number,
+      payment_firstname: this.state.payment_cc_firstname,
+      payment_lastname: this.state.payment_cc_lastname,
+      payment_type: this.state.payment_cc_type,
+      payment_address: this.state.payment_cc_address,
+      payment_expiry: this.state.payment_cc_expiry,
+      shipping_street: this.state.shipping_street,
+      shipping_zipcode: this.state.shipping_zipcode,
+      shipping_city: this.state.shipping_city,
+      shipping_country: this.state.shipping_country
+    };
+    this.addUser(newuser);
+
+    swal("Successfully Added", "Your account has been created !", "success");
+    this.refs.addDialog.hide();
+  }
 
   render() {
     const { classes } = this.props;
@@ -502,7 +491,7 @@ class AddCustomerModal extends Component {
           color="primary"
           className={classes.submit}
           // onClick={this.validatepersonal.bind(this)}
-          onClick={this.handleNext}
+          onClick={this.validatepersonal.bind(this)}
           style={{ marginTop: "25px" }}
         >
           Next (Shipping Info)
@@ -605,7 +594,7 @@ class AddCustomerModal extends Component {
     const classes = this.props;
     return (
       <form>
-        <Grid container direction="row">
+        <Grid container direction="row" spacing={1}>
           <Grid item md={12}>
             <Cards
               name={
@@ -614,9 +603,10 @@ class AddCustomerModal extends Component {
                 this.state.payment_cc_firstname
               }
               number={this.state.payment_cc_number}
+              expiry={this.state.payment_cc_expiry}
             ></Cards>
           </Grid>
-          <Grid item md={10}>
+          <Grid item md={6}>
             <TextField
               id="t_number"
               label="Credit Card Number"
@@ -636,6 +626,58 @@ class AddCustomerModal extends Component {
                 })
               }
             />
+          </Grid>
+          <Grid item md={3}>
+            <TextField
+              id="t_expiry"
+              required
+              label="Expiry"
+              style={{ witdh: "50%%", marginTop: "10px" }}
+              className={classes.textField}
+              value={this.state.payment_cc_expiry}
+              margin="normal"
+              variant="outlined"
+              placeholder="MM/YY"
+              inputProps={{ maxLength: 5 }}
+              onChange={e =>
+                this.setState({
+                  payment_cc_expiry: e.target.value
+                })
+              }
+            />
+          </Grid>
+          <Grid item md={2}>
+            <Select
+              onChange={e => this.setState({ payment_cc_type: e.target.value })}
+              inputProps={{
+                name: "type",
+                id: "type_id"
+              }}
+              name="type"
+              value={this.state.payment_cc_type}
+              label="Type"
+              style={{ marginTop: "14px" }}
+            >
+              <MenuItem value="Visa">
+                <img src={Visa} alt="Visa" width="45px" heigth="40px"></img>
+              </MenuItem>
+              <MenuItem value="MasterCard">
+                <img
+                  src={Mastercard}
+                  alt="MasterCard"
+                  width="45px"
+                  heigth="40px"
+                ></img>
+              </MenuItem>
+              <MenuItem value="American Express">
+                <img
+                  src={AmericanExpress}
+                  alt="American Express"
+                  width="45px"
+                  heigth="40px"
+                ></img>
+              </MenuItem>
+            </Select>
           </Grid>
           <Grid item md={12}>
             <Grid container spacing={1}>
@@ -672,7 +714,7 @@ class AddCustomerModal extends Component {
               <Grid item md>
                 <TextField
                   id="t_address"
-                  label="Address"
+                  label="Holder's Address"
                   required
                   style={{ witdh: "50%%", marginTop: "10px" }}
                   className={classes.textField}
