@@ -30,6 +30,7 @@ import Select from "@material-ui/core/Select";
 import AmericanExpress from "../../Shared Admin&Customer/Ressources/americanexpress.png";
 import Visa from "../../Shared Admin&Customer/Ressources/visa.png";
 import Mastercard from "../../Shared Admin&Customer/Ressources/mastercard.png";
+import LockOpenIcon from "@material-ui/icons/LockOpen";
 
 const useStyles = theme => ({
   "@global": {
@@ -113,12 +114,18 @@ class AddCustomerModal extends Component {
       password: "",
       password2: "",
       response: "",
-      activeStep: 0
+      activeStep: 0,
+      login_email: "",
+      login_password: "",
+      success: null
     };
+    this.login = this.login.bind(this);
+    this.validatelogin = this.validatelogin.bind(this);
+    this.emptylogin = this.emptylogin.bind(this);
   }
 
   changedate(x) {
-    this.setState({ customer_birth_date: moment(x).format("L") });
+    this.setState({ customer_birth_date: x });
   }
 
   handleNext = () => {
@@ -169,7 +176,7 @@ class AddCustomerModal extends Component {
       errors = "You did not fill all required fields !";
     } else {
       const url = `http://localhost:8080/User/${this.state.user_email}/email`;
-      const reg = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+      const reg = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
       await fetch(url)
         .then(async res => await res.json())
         .then(data => {
@@ -254,6 +261,46 @@ class AddCustomerModal extends Component {
     }
   }
 
+  emptylogin() {
+    this.setState({ login_email: "", login_password: "" });
+  }
+
+  async validatelogin() {
+    var errors = null;
+    const reg = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    if (
+      this.state.login_email.length === 0 ||
+      this.state.login_password.length === 0
+    ) {
+      errors = "You did not fill all required fields !";
+    } else if (reg.test(this.state.login_email) === false) {
+      errors = "Please enter a valid email address";
+    } else {
+      const value = {
+        email: this.state.login_email,
+        password: this.state.login_password
+      };
+      await this.login(value);
+      if (this.state.success === false) {
+        errors = "Wrong Password !";
+      } else if (this.state.success === null) {
+        errors = "Email doesn't exist !";
+      } else if (this.state.success === true) {
+        errors = null;
+      }
+    }
+    if (errors === null) {
+      swal("Successful Login", "Welcome Back ! :)", "success").then(
+        this.emptylogin
+      );
+      // this.refs.addDialog.hide();
+    } else {
+      swal("Oops", errors, "error")
+        .then((errors = null))
+        .then(this.emptylogin);
+    }
+  }
+
   async addUser(value) {
     await fetch("http://localhost:8080/Register", {
       method: "POST",
@@ -261,7 +308,13 @@ class AddCustomerModal extends Component {
         "Content-Type": "application/json"
       },
       body: JSON.stringify(value)
-    }).catch(err => console.error(err));
+    })
+      .then(async res => await res.json())
+      .then(data => {
+        this.props.changeLoginState("Customer", data.customer_id);
+        console.log("Customer id:", data.customer_id);
+      })
+      .catch(err => console.error(err));
   }
 
   handleSubmit() {
@@ -272,7 +325,7 @@ class AddCustomerModal extends Component {
       user_lastname: this.state.user_last_name,
       user_email: this.state.user_email,
       user_password: hash,
-      customer_birthdate: this.state.customer_birth_date,
+      customer_birthdate: moment(this.state.customer_birth_date).format("L"),
       customer_phonenumber: this.state.customer_phone_number,
       payment_number: this.state.payment_cc_number,
       payment_firstname: this.state.payment_cc_firstname,
@@ -291,9 +344,140 @@ class AddCustomerModal extends Component {
     this.refs.addDialog.hide();
   }
 
+  async login(value) {
+    await fetch("http://localhost:8080/Login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(value)
+    })
+      .then(async res => await res.json())
+      .then(data => {
+        console.log("The Data : ", data);
+        if (data.login_status === "wrong") {
+          this.setState({ success: false });
+        } else if (data.login_status === null) {
+          this.setState({ success: null });
+        } else {
+          this.setState({ success: true });
+          this.props.changeLoginState(data.login_status, data.id);
+        }
+      })
+      .catch(err => console.log(err));
+  }
+
   render() {
     const { classes } = this.props;
     const steps = this.getSteps();
+    const register = (
+      <Container component="main" maxWidth="md">
+        <CssBaseline />
+        <div className={classes.paper}>
+          <Avatar className={classes.avatar}>
+            <PersonAddIcon />
+          </Avatar>
+          <Typography
+            component={"span"}
+            variant="h5"
+            style={{ color: "black" }}
+          >
+            Create New Account
+          </Typography>
+          <div className={classes.root}>
+            <Stepper activeStep={this.state.activeStep}>
+              {steps.map((label, index) => {
+                const stepProps = {};
+                const labelProps = {};
+                return (
+                  <Step key={label} {...stepProps}>
+                    <StepLabel
+                      StepIconComponent={ColorlibStepIcon}
+                      {...labelProps}
+                    >
+                      {label}
+                    </StepLabel>
+                  </Step>
+                );
+              })}
+            </Stepper>
+            <div>
+              <Typography component={"span"} className={classes.instructions}>
+                {this.getStepContent(this.state.activeStep, this.state)}
+              </Typography>
+            </div>
+          </div>
+        </div>
+      </Container>
+    );
+    const login = (
+      <Container component="main" maxWidth="md">
+        <CssBaseline />
+        <div className={classes.paper}>
+          <Avatar className={classes.avatar}>
+            <LockOpenIcon />
+          </Avatar>
+          <Typography
+            component={"span"}
+            variant="h5"
+            style={{ color: "black" }}
+          >
+            Login
+          </Typography>
+          <div className={classes.root}>
+            <div>
+              <form>
+                <Grid container direction="row">
+                  <Grid item md>
+                    <TextField
+                      id="l_email"
+                      required
+                      placeholder="Email"
+                      className={classes.textField}
+                      label="Email"
+                      value={this.state.login_email + ""}
+                      margin="normal"
+                      variant="outlined"
+                      onChange={e =>
+                        this.setState({ login_email: e.target.value })
+                      }
+                    />
+                  </Grid>
+                  <Grid item md>
+                    <TextField
+                      id="l_password"
+                      label="Password"
+                      required
+                      // style={styles.TextField}
+                      margin="normal"
+                      type="password"
+                      value={this.state.login_password}
+                      placeholder={"Enter password"}
+                      variant="outlined"
+                      className={classes.textField}
+                      onChange={e =>
+                        this.setState({ login_password: e.target.value })
+                      }
+                    />
+                  </Grid>
+                </Grid>
+                <Button
+                  fullWidth
+                  variant="contained"
+                  color="primary"
+                  className={classes.submit}
+                  // onClick={this.validatepersonal.bind(this)}
+                  onClick={this.validatelogin}
+                  style={{ marginTop: "25px" }}
+                >
+                  Login
+                </Button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </Container>
+    );
 
     return (
       <div>
@@ -302,52 +486,23 @@ class AddCustomerModal extends Component {
           data-dismiss="modal"
           ref="addDialog"
           dialogStyles={modalstyle}
-          afterClose={this.handleReset}
+          afterClose={
+            this.props.choice === "Login" ? this.emptylogin : this.handleReset
+          }
         >
-          <Container component="main" maxWidth="md">
-            <CssBaseline />
-            <div className={classes.paper}>
-              <Avatar className={classes.avatar}>
-                <PersonAddIcon />
-              </Avatar>
-              <Typography
-                component="h1"
-                variant="h5"
-                style={{ color: "black" }}
-              >
-                Create New Account
-              </Typography>
-              <div className={classes.root}>
-                <Stepper activeStep={this.state.activeStep}>
-                  {steps.map((label, index) => {
-                    const stepProps = {};
-                    const labelProps = {};
-                    return (
-                      <Step key={label} {...stepProps}>
-                        <StepLabel
-                          StepIconComponent={ColorlibStepIcon}
-                          {...labelProps}
-                        >
-                          {label}
-                        </StepLabel>
-                      </Step>
-                    );
-                  })}
-                </Stepper>
-                <div>
-                  <Typography className={classes.instructions}>
-                    {this.getStepContent(this.state.activeStep, this.state)}
-                  </Typography>
-                </div>
-              </div>
-            </div>
-          </Container>
+          {this.props.choice === "Login" ? login : register}
         </SkyLight>
-        <div>
+        <p
+          onClick={() => this.refs.addDialog.show()}
+          style={{ margin: 0, padding: 0 }}
+        >
+          {this.props.choice}
+        </p>
+        {/* <div>
           <Avatar className={classes.avatar}>
-            <PersonAddIcon onClick={() => this.refs.addDialog.show()} />
+            <PersonAddIcon />
           </Avatar>
-        </div>
+        </div> */}
       </div>
     );
   }
@@ -393,18 +548,19 @@ class AddCustomerModal extends Component {
                   onChange={e =>
                     this.setState({ user_first_name: e.target.value })
                   }
+                  placeholder="First Name"
                 />
               </Grid>
               <Grid item>
                 <TextField
-                  id="t_oldpassword"
-                  label="Old Password"
+                  id="t_newpassword"
+                  label="Password"
                   required
                   // style={styles.TextField}
                   margin="normal"
                   type="password"
                   value={this.state.password}
-                  placeholder={"Enter old password"}
+                  placeholder={"Enter Password"}
                   variant="outlined"
                   className={classes.textField}
                   onChange={e => this.setState({ password: e.target.value })}
@@ -415,6 +571,7 @@ class AddCustomerModal extends Component {
                   id="t_phone"
                   label="Phone Number"
                   required
+                  placeholder="Phone Number"
                   className={classes.textField}
                   value={this.state.customer_phone_number + ""}
                   margin="normal"
@@ -429,12 +586,13 @@ class AddCustomerModal extends Component {
             </Grid>
           </Grid>
           <Grid item md={4}>
-            <Grid contaner>
+            <Grid container>
               <Grid item md>
                 <TextField
                   id="t_lastname"
                   label="Last Name"
                   required
+                  placeholder="Last Name"
                   className={classes.textField}
                   value={this.state.user_last_name + ""}
                   margin="normal"
@@ -446,14 +604,14 @@ class AddCustomerModal extends Component {
               </Grid>
               <Grid item>
                 <TextField
-                  id="t_newpassword"
+                  id="t_newpassword2"
                   // style={styles.TextField}
                   label="New Password"
                   margin="normal"
                   required
                   type="password"
                   value={this.state.password2}
-                  placeholder={"Enter new password"}
+                  placeholder={"Re-Enter new password"}
                   variant="outlined"
                   className={classes.textField}
                   onChange={e => this.setState({ password2: e.target.value })}
@@ -469,7 +627,7 @@ class AddCustomerModal extends Component {
             </Grid>
           </Grid>
           <Grid item md={4}>
-            <Grid contaner>
+            <Grid container>
               <Grid item md>
                 <TextField
                   id="t_email"
@@ -478,6 +636,7 @@ class AddCustomerModal extends Component {
                   className={classes.textField}
                   value={this.state.user_email + ""}
                   margin="normal"
+                  placeholder="Email"
                   variant="outlined"
                   onChange={e => this.setState({ user_email: e.target.value })}
                 />
@@ -514,6 +673,7 @@ class AddCustomerModal extends Component {
               value={this.state.shipping_street}
               margin="normal"
               variant="outlined"
+              placeholder="Street"
               fullWidth
               onChange={e => this.setState({ shipping_street: e.target.value })}
             />
@@ -530,6 +690,7 @@ class AddCustomerModal extends Component {
                   value={this.state.shipping_city}
                   margin="normal"
                   variant="outlined"
+                  placeholder="City"
                   onChange={e =>
                     this.setState({ shipping_city: e.target.value })
                   }
@@ -542,6 +703,7 @@ class AddCustomerModal extends Component {
                   label="ZipCode"
                   required
                   className={classes.textField}
+                  placeholder="ZipCode"
                   value={this.state.shipping_zipcode}
                   margin="normal"
                   variant="outlined"
@@ -561,6 +723,7 @@ class AddCustomerModal extends Component {
                   // style={styles.TextField}
                   label="Country"
                   required
+                  placeholder="Country"
                   className={classes.textField}
                   value={this.state.shipping_country}
                   margin="normal"
@@ -604,6 +767,8 @@ class AddCustomerModal extends Component {
               }
               number={this.state.payment_cc_number}
               expiry={this.state.payment_cc_expiry}
+              cvc=""
+              focus=""
             ></Cards>
           </Grid>
           <Grid item md={6}>
@@ -615,6 +780,7 @@ class AddCustomerModal extends Component {
               type="int"
               required
               value={this.state.payment_cc_number}
+              placeholder="xxxxxxxxxxxxxxxx"
               margin="normal"
               variant="outlined"
               fullWidth
@@ -690,6 +856,7 @@ class AddCustomerModal extends Component {
                   className={classes.textField}
                   value={this.state.payment_cc_lastname}
                   margin="normal"
+                  placeholder="Last Name"
                   variant="outlined"
                   onChange={e =>
                     this.setState({ payment_cc_lastname: e.target.value })
@@ -705,6 +872,7 @@ class AddCustomerModal extends Component {
                   className={classes.textField}
                   value={this.state.payment_cc_firstname}
                   margin="normal"
+                  placeholder="First Name"
                   variant="outlined"
                   onChange={e =>
                     this.setState({ payment_cc_firstname: e.target.value })
@@ -721,6 +889,7 @@ class AddCustomerModal extends Component {
                   value={this.state.payment_cc_address}
                   margin="normal"
                   variant="outlined"
+                  placeholder="Address"
                   fullWidth
                   onChange={e =>
                     this.setState({ payment_cc_address: e.target.value })
@@ -753,7 +922,7 @@ AddCustomerModal.propTypes = {
 export default withStyles(useStyles)(withRouter(AddCustomerModal));
 
 function MaterialUIPickers(props) {
-  const [selectedDate, setSelectedDate] = React.useState(new Date(props.date));
+  const [selectedDate, setSelectedDate] = React.useState(null);
   const handleDateChange = date => {
     setSelectedDate(date);
     props.change(date);

@@ -89,8 +89,8 @@ class ModifyShippingInfoModal extends Component {
       },
       body: JSON.stringify(newvalue)
     })
-      .then(res => this.props.fetchcustomer(this.props.shipping.customer))
-      .catch(err => swal("Error Updating", err, "error"));
+      .then(res => this.props.fetchcustomer(this.props.user.user_ID))
+      .catch(err => console.log(err));
   }
 
   handleSubmit = async event => {
@@ -100,7 +100,6 @@ class ModifyShippingInfoModal extends Component {
       await swal("Oops!", errors, "error");
       return;
     } else if (errors === null) {
-      console.log("No Errors");
       var modifiedShipping = {
         street: this.state.street,
         city: this.state.city,
@@ -112,10 +111,9 @@ class ModifyShippingInfoModal extends Component {
         "Successfully Modified",
         "Your shipping information has been updated !",
         "success"
-      ).then(function() {
-        window.location.reload();
-      });
-      this.refs.addDialog.hide();
+      )
+        .then(this.props.track())
+        .then(this.refs.addDialog.hide());
     }
   };
 
@@ -137,7 +135,7 @@ class ModifyShippingInfoModal extends Component {
                 <Grid container direction="row">
                   <Grid item sm={12}>
                     <TextField
-                      id="t_street"
+                      id="m_street"
                       label="Street"
                       required
                       // style={styles.TextField.largetext}
@@ -152,7 +150,7 @@ class ModifyShippingInfoModal extends Component {
                   </Grid>
                   <Grid item>
                     <TextField
-                      id="t_city"
+                      id="m_city"
                       // style={styles.TextField}
                       label="City"
                       required
@@ -163,7 +161,7 @@ class ModifyShippingInfoModal extends Component {
                       onChange={e => this.setState({ city: e.target.value })}
                     />
                     <TextField
-                      id="t_zipcode"
+                      id="m_zipcode"
                       // style={styles.TextField}
                       label="ZipCode"
                       required
@@ -183,7 +181,7 @@ class ModifyShippingInfoModal extends Component {
                   </Grid>
                   <Grid item sm>
                     <TextField
-                      id="t_country"
+                      id="m_country"
                       // style={styles.TextField}
                       label="Country"
                       required
@@ -193,17 +191,6 @@ class ModifyShippingInfoModal extends Component {
                       variant="outlined"
                       onChange={e => this.setState({ country: e.target.value })}
                     />
-                    {/* <Select
-                      inputProps={{
-                        name: "country",
-                        id: "country_id"
-                      }}
-                      name="country"
-                      label="Country"
-                      value="Morocco"
-                    >
-                      <MenuItem value="Morocco">Morocco</MenuItem>
-                    </Select> */}
                   </Grid>
                 </Grid>
                 <Button

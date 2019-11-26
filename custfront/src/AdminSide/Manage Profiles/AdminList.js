@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import { withRouter } from "react-router-dom";
 import AddAdmin from "./AddAdmin";
 import {
   Table,
@@ -14,6 +13,7 @@ class Adminlist extends Component {
     super(props);
     this.state = { users: [], added: false };
     this.handleStateChange = this.handleStateChange.bind(this);
+    this.fetchadmins = this.fetchadmins.bind(this);
   }
 
   async componentDidMount() {
@@ -24,17 +24,20 @@ class Adminlist extends Component {
     this.setState({ added: true });
   }
 
-  // async componentDidUpdate(prevProps, prevState) {
-  //   // only update chart if the data has changed
-  //   await this.fetchadmins();
-  // }
+  async componentDidUpdate(prevState) {
+    if (this.state.added === true) {
+      await this.fetchadmins()
+        .then(this.setState({ added: false }))
+        .then(console.log("Update Trigerred !"));
+    }
+  }
 
   async fetchadmins() {
     const url = `http://localhost:8080/Admins`;
     await fetch(url)
       .then(async res => await res.json())
       .then(data => {
-        this.setState({ users: data });
+        this.setState({ users: data, added: false });
       })
       .catch(err => console.log(err));
   }
@@ -47,7 +50,7 @@ class Adminlist extends Component {
       },
       body: JSON.stringify(admin)
     })
-      .then(res => this.fetchadmins)
+      .then(res => this.fetchadmins())
       .catch(err => console.error(err));
   }
 
@@ -87,4 +90,4 @@ class Adminlist extends Component {
   }
 }
 
-export default withRouter(Adminlist);
+export default Adminlist;

@@ -1,0 +1,21 @@
+@font-face {
+  font-family: Glacial;
+  src: url(https://fontlibrary.org/face/glacial-indifference);
+}
+
+.admins-paper {
+  width: 1000px;
+}
+
+.customers-paper {
+  width: 1100px;
+}
+
+.orders-paper {
+  width: 1000px;
+}
+
+.typography {
+  font-family: Glacial;
+  font-size: xx-large;
+}

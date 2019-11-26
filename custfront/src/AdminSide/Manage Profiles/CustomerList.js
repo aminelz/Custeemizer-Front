@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import { Link, withRouter } from "react-router-dom";
 import VisibilityIcon from "@material-ui/icons/Visibility";
 import {
   Table,
@@ -8,6 +7,7 @@ import {
   TableRow,
   TableHead
 } from "@material-ui/core";
+import CustomerDetailsModal from "./CustomerDetailsModal";
 
 class Customerlist extends Component {
   constructor(props) {
@@ -29,7 +29,6 @@ class Customerlist extends Component {
       .catch(err => console.log(err));
   }
   render() {
-    var total = 3;
     const tableRows = this.state.users.map((user, index) => (
       <TableRow key={index}>
         <TableCell align="left">{user.user_ID}</TableCell>
@@ -38,12 +37,7 @@ class Customerlist extends Component {
         <TableCell align="right">{user.email}</TableCell>
         <TableCell align="center">{user.password}</TableCell>
         <TableCell>
-          <Link
-            style={{ color: "green" }}
-            to={{ pathname: "/Customer/" + (total + 1), myuser: { user } }}
-          >
-            <VisibilityIcon />
-          </Link>
+          <CustomerDetailsModal user={user} id={user.user_ID} />
         </TableCell>
       </TableRow>
     ));
@@ -69,4 +63,4 @@ class Customerlist extends Component {
   }
 }
 
-export default withRouter(Customerlist);
+export default Customerlist;

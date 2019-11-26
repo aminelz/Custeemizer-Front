@@ -49,19 +49,40 @@ const useStyles = theme => ({
   }
 });
 
+const modalstyle = {
+  width: "50%",
+  height: "auto",
+  position: "fixed",
+  top: "35%",
+  left: "50%",
+  marginTop: "-150px",
+  marginLeft: "-25%",
+  backgroundColor: "#fff",
+  borderRadius: "2px",
+  zIndex: 1000,
+  padding: "15px",
+  boxShadow: "0 0 4px rgba(0,0,0,.14),0 4px 8px rgba(0,0,0,.28)"
+};
+
 class ModifyPersonalInfoModal extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      first_name: props.user[3],
-      last_name: props.user[4],
-      email: props.user[2],
+      first_name: props.user.first_name,
+      last_name: props.user.last_name,
+      email: props.user.email,
       phone_number: props.customer.phone_number,
       birth_date: props.customer.birth_date,
       response: null,
       customerid: props.customer.customer_ID,
-      userid: props.user[0]
+      userid: props.user.user_ID
     };
+    this.fetchemail = this.fetchemail.bind(this);
+    this.validatemodification = this.validatemodification.bind(this);
+    this.changedate = this.changedate.bind(this);
+    this.modifyCustomer = this.modifyCustomer.bind(this);
+    this.modifyUser = this.modifyUser.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
   }
 
   changedate(x) {
@@ -80,7 +101,7 @@ class ModifyPersonalInfoModal extends Component {
 
   async validatemodification() {
     var errors = null;
-    const reg = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    const reg = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     await this.fetchemail();
     if (
       this.state.first_name.length === 0 ||
@@ -92,13 +113,13 @@ class ModifyPersonalInfoModal extends Component {
       errors = "You did not fill all required fields !";
     } else if (
       this.state.response === true &&
-      this.state.email !== this.props.user[2]
+      this.state.email !== this.props.user.email
     ) {
       errors = "The email you entered is already used !";
     } else if (
-      this.state.first_name === this.props.user[3] &&
-      this.state.last_name === this.props.user[4] &&
-      this.state.email === this.props.user[2] &&
+      this.state.first_name === this.props.user.first_name &&
+      this.state.last_name === this.props.user.last_name &&
+      this.state.email === this.props.user.email &&
       this.state.phone_number === this.props.customer.phone_number &&
       this.state.birth_date === this.props.customer.birth_date
     ) {
@@ -117,7 +138,10 @@ class ModifyPersonalInfoModal extends Component {
       },
       body: JSON.stringify(newvalue)
     })
-      .then(res => this.props.fetchcustomer(this.props.customer.customer_ID))
+      .then(res => {
+        this.props.fetchcustomer(this.props.user.user_ID);
+        // this.props.fetchuser(this.props.user.user_ID);
+      })
       .catch(err => swal("Error Updating", err, "error"));
   }
 
@@ -129,8 +153,11 @@ class ModifyPersonalInfoModal extends Component {
       },
       body: JSON.stringify(newvalue)
     })
-      .then(res => this.props.fetchcustomer(this.props.customer.customer_ID))
-      .catch(err => swal("Error Updating", err, "error"));
+      .then(res => {
+        // this.props.fetchcustomer(this.props.user.user_ID);
+        this.props.fetchuser(this.props.user.user_ID);
+      })
+      .catch(err => console.log(err));
   }
 
   handleSubmit = async event => {
@@ -140,7 +167,6 @@ class ModifyPersonalInfoModal extends Component {
       await swal("Oops!", errors, "error");
       return;
     } else if (errors === null) {
-      console.log(this.state.birth_date);
       var modifiedCustomer = {
         phone_number: this.state.phone_number,
         birth_date: this.state.birth_date
@@ -151,9 +177,9 @@ class ModifyPersonalInfoModal extends Component {
         email: this.state.email
       };
       if (
-        this.state.first_name !== this.props.user[3] ||
-        this.state.last_name !== this.props.user[4] ||
-        this.state.email !== this.props.user[2]
+        this.state.first_name !== this.props.user.first_name ||
+        this.state.last_name !== this.props.user.last_name ||
+        this.state.email !== this.props.user.email
       ) {
         this.modifyUser(this.state.userid, modifiedUser);
       }
@@ -168,10 +194,13 @@ class ModifyPersonalInfoModal extends Component {
         "Successfully Modified",
         "Your account's personal information has been updated !",
         "success"
-      ).then(function() {
-        window.location.reload();
-      });
-      this.refs.addDialog.hide();
+      )
+        .then(this.props.track())
+        .then(this.refs.addDialog.hide());
+      // ).then(function() {
+      //   window.location.reload();
+      // });
+      // this.refs.addDialog.hide();
     }
   };
 
@@ -179,7 +208,12 @@ class ModifyPersonalInfoModal extends Component {
     const { classes } = this.props;
     return (
       <div>
-        <SkyLight hideOnOverlayClicked data-dismiss="modal" ref="addDialog">
+        <SkyLight
+          hideOnOverlayClicked
+          data-dismiss="modal"
+          ref="addDialog"
+          dialogStyles={modalstyle}
+        >
           <Container component="main" maxWidth="sm">
             <CssBaseline />
             <div className={classes.paper}>
@@ -193,7 +227,7 @@ class ModifyPersonalInfoModal extends Component {
                 <Grid container direction="row">
                   <Grid item>
                     <TextField
-                      id="t_firstname"
+                      id="m_firstname"
                       className={classes.textField}
                       label="First Name"
                       value={this.state.first_name}
@@ -204,7 +238,7 @@ class ModifyPersonalInfoModal extends Component {
                       }
                     />
                     <TextField
-                      id="t_lastname"
+                      id="m_lastname"
                       label="Last Name"
                       className={classes.textField}
                       value={this.state.last_name}
@@ -217,7 +251,7 @@ class ModifyPersonalInfoModal extends Component {
                   </Grid>
                   <Grid item>
                     <TextField
-                      id="t_email"
+                      id="m_email"
                       label="Email"
                       className={classes.textField}
                       value={this.state.email}
@@ -229,7 +263,7 @@ class ModifyPersonalInfoModal extends Component {
                   </Grid>
                   <Grid item>
                     <TextField
-                      id="t_phone"
+                      id="m_phone"
                       label="Phone Number"
                       className={classes.textField}
                       value={this.state.phone_number}

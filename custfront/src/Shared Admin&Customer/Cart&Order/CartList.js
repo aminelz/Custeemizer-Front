@@ -1,10 +1,13 @@
 import React, { Component } from "react";
 import { withRouter } from "react-router-dom";
+import RemoveShoppingCartIcon from "@material-ui/icons/RemoveShoppingCart";
+import CheckoutModal from "./CheckoutModal";
 
 class Cartlist extends Component {
   constructor(props) {
     super(props);
-    this.state = { items: [] };
+    this.state = { items: [], change: false, total_price: 0 };
+    this.removeItem = this.removeItem.bind(this);
   }
 
   //   computetotal() {
@@ -15,16 +18,38 @@ class Cartlist extends Component {
     await this.fetchcart();
   }
 
+  async componentDidUpdate() {
+    if (this.state.change === true) {
+      await this.fetchcart().then(this.setState({ change: false }));
+    }
+  }
+
   async fetchcart() {
-    const url = "http://localhost:8080/Cart/16/items";
+    const url = `http://localhost:8080/Cart/${this.props.cart_ID}/items`;
     await fetch(url)
       .then(async res => await res.json())
       .then(data => {
         this.setState({ items: data });
+        this.setState({
+          total_price: this.state.items.reduce(
+            (prev, next) => prev + next.quantity * next.tshirt.price,
+            0
+          )
+        });
       })
       .catch(err => console.log(err));
   }
+
+  async removeItem(x) {
+    const url = `http://localhost:8080/CartItem/${x}/Delete`;
+    await fetch(url).then(res => {
+      // this.fetchcart();
+      this.setState({ change: true });
+    });
+  }
+
   render() {
+    const count = this.state.items.length;
     const tableRows = this.state.items.map((item, index) => (
       <tr key={index}>
         <td>{item.tshirt.name}</td>
@@ -32,14 +57,57 @@ class Cartlist extends Component {
           <img src={item.tshirt.image_URL} alt="tshirt" width="45px" />
         </td>
         <td>{item.tshirt.price}</td>
-        <td>{item.quantity}</td>
+        <td>
+          <input
+            type="number"
+            className="input"
+            value={item.quantity}
+            min="1"
+            readOnly
+            style={{ width: "50%" }}
+          />
+          <br />
+          <button
+            className="button"
+            onClick={() => {
+              this.handleIncrement();
+            }}
+          >
+            +
+          </button>
+          <button
+            className="button"
+            onClick={() => {
+              this.handleDecrement();
+            }}
+          >
+            -
+          </button>
+        </td>
         <td>{item.tshirt.price * item.quantity}</td>
+        <td>
+          <button
+            className="button"
+            onClick={() => {
+              this.removeItem(item.item_ID);
+            }}
+          >
+            Remove Item
+            <RemoveShoppingCartIcon />
+          </button>
+        </td>
       </tr>
     ));
+
+    const empty = (
+      <p>
+        <b>Your Cart is empty ! </b>
+      </p>
+    );
     return (
-      <div>
-        <div>
-          <table>
+      <div style={{ margin: 0, padding: 0 }}>
+        <div style={{ margin: 0, padding: 0 }}>
+          <table style={{ margin: 0, padding: 0 }}>
             <tbody>
               <tr>
                 <th>Name</th>
@@ -48,9 +116,29 @@ class Cartlist extends Component {
                 <th>Quantity</th>
                 <th>Total</th>
               </tr>
-              {tableRows}
+              {count > 0 && tableRows}
+              {count === 0 && empty}
             </tbody>
           </table>
+          {count !== 0 && (
+            <p style={{ marginLeft: "20%" }}>
+              Total Price : {this.state.total_price}
+            </p>
+          )}
+          {this.props.login_status === null && (
+            <p> Please Login or Register to Proceed to Checkout</p>
+          )}
+          {this.props.login_status === "Customer" && count !== 0 ? (
+            <CheckoutModal
+              user_ID={this.props.logged_id}
+              cart_ID={this.props.cart_ID}
+              items={this.state.items}
+              total={this.state.total_price}
+              handleCart={this.props.handleCart}
+            />
+          ) : (
+            <br></br>
+          )}
         </div>
       </div>
     );

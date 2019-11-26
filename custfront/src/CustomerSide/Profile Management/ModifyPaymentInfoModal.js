@@ -13,6 +13,10 @@ import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
 import swal from "sweetalert";
 import Cards from "react-credit-cards";
+import { Select, MenuItem } from "@material-ui/core";
+import AmericanExpress from "../../Shared Admin&Customer/Ressources/americanexpress.png";
+import Visa from "../../Shared Admin&Customer/Ressources/visa.png";
+import Mastercard from "../../Shared Admin&Customer/Ressources/mastercard.png";
 
 const useStyles = theme => ({
   "@global": {
@@ -43,6 +47,20 @@ const useStyles = theme => ({
     marginRight: theme.spacing(1)
   }
 });
+const modalstyle = {
+  width: "50%",
+  height: "auto",
+  position: "fixed",
+  top: "35%",
+  left: "50%",
+  marginTop: "-200px",
+  marginLeft: "-25%",
+  backgroundColor: "#fff",
+  borderRadius: "2px",
+  zIndex: 1000,
+  padding: "15px",
+  boxShadow: "0 0 4px rgba(0,0,0,.14),0 4px 8px rgba(0,0,0,.28)"
+};
 
 class ModifyShippingInfoModal extends Component {
   constructor(props) {
@@ -52,6 +70,8 @@ class ModifyShippingInfoModal extends Component {
       cc_firstname: props.payment.cc_firstname,
       cc_lastname: props.payment.cc_lastname,
       cc_address: props.payment.cc_address,
+      cc_expiry: props.payment.cc_expiry,
+      cc_type: props.payment.cc_type,
       id: props.payment.payment_ID
     };
   }
@@ -71,14 +91,18 @@ class ModifyShippingInfoModal extends Component {
       this.state.cc_number.length === 0 ||
       this.state.cc_firstname.length === 0 ||
       this.state.cc_lastname.length === 0 ||
-      this.state.cc_address.length === 0
+      this.state.cc_address.length === 0 ||
+      this.state.cc_expiry.length === 0 ||
+      this.state.cc_type.length === 0
     ) {
       errors = "You did not fill all required fields !";
     } else if (
       this.state.cc_number === this.props.payment.cc_number &&
       this.state.cc_firstname === this.props.payment.cc_firstname &&
       this.state.cc_lastname === this.props.payment.cc_lastname &&
-      this.state.cc_address === this.props.payment.cc_address
+      this.state.cc_address === this.props.payment.cc_address &&
+      this.state.cc_type === this.props.payment.cc_type &&
+      this.state.cc_expiry === this.props.payment.cc_expiry
     ) {
       errors = "Nothing has been modified !";
     } else if (this.state.cc_number.length !== 16) {
@@ -95,8 +119,8 @@ class ModifyShippingInfoModal extends Component {
       },
       body: JSON.stringify(newvalue)
     })
-      .then(res => this.props.fetchcustomer(this.props.shipping.customer))
-      .catch(err => swal("Error Updating", err, "error"));
+      .then(res => this.props.fetchcustomer(this.props.user.user_ID))
+      .catch(err => console.log(err));
   }
 
   handleSubmit = async event => {
@@ -110,17 +134,21 @@ class ModifyShippingInfoModal extends Component {
         cc_number: this.state.cc_number,
         cc_firstname: this.state.cc_firstname,
         cc_lastname: this.state.cc_lastname,
-        cc_address: this.state.cc_address
+        cc_address: this.state.cc_address,
+        cc_expiry: this.state.cc_expiry,
+        cc_type: this.state.cc_type
       };
       this.modifypayment(this.state.id, modifiedPayment);
       swal(
         "Successfully Modified",
         "Your payment information has been updated !",
         "success"
-      ).then(function() {
-        window.location.reload();
-      });
-      this.refs.addDialog.hide();
+      )
+        .then(this.props.track())
+        .then(this.refs.addDialog.hide());
+      // ).then(function() {
+      //   window.location.reload();
+      // });
     }
   };
 
@@ -128,7 +156,11 @@ class ModifyShippingInfoModal extends Component {
     const { classes } = this.props;
     return (
       <div>
-        <SkyLight hideOnOverlayClicked ref="addDialog">
+        <SkyLight
+          hideOnOverlayClicked
+          ref="addDialog"
+          dialogStyles={modalstyle}
+        >
           <Container component="main" maxWidth="sm">
             <CssBaseline />
             <div className={classes.paper}>
@@ -139,7 +171,7 @@ class ModifyShippingInfoModal extends Component {
                 Modify Account Information
               </Typography>
               <form>
-                <Grid container direction="row" alignItems="center">
+                {/* <Grid container direction="row" alignItems="center">
                   <Grid item>
                     <Grid container alignItems="center" direction="row">
                       <Grid item>
@@ -210,6 +242,153 @@ class ModifyShippingInfoModal extends Component {
                             }
                           />
                         </Grid>
+                      </Grid>
+                    </Grid>
+                  </Grid>
+                </Grid> */}
+                <Grid container direction="row" spacing={1}>
+                  <Grid item md={12}>
+                    <Cards
+                      name={
+                        this.state.cc_lastname + " " + this.state.cc_firstname
+                      }
+                      number={this.state.cc_number}
+                      expiry={this.state.c_expiry}
+                      cvc=""
+                      focus=""
+                    ></Cards>
+                  </Grid>
+                  <Grid item md={6}>
+                    <TextField
+                      id="m_number"
+                      label="Credit Card Number"
+                      style={{ witdh: "50%%", marginTop: "10px" }}
+                      className={classes.textField}
+                      type="int"
+                      required
+                      value={this.state.cc_number}
+                      margin="normal"
+                      variant="outlined"
+                      fullWidth
+                      onChange={e =>
+                        this.setState({
+                          cc_number: Math.max(0, parseInt(e.target.value))
+                            .toString()
+                            .slice(0, 16)
+                        })
+                      }
+                    />
+                  </Grid>
+                  <Grid item md={3}>
+                    <TextField
+                      id="m_expiry"
+                      required
+                      label="Expiry"
+                      style={{ witdh: "50%%", marginTop: "10px" }}
+                      className={classes.textField}
+                      value={this.state.cc_expiry}
+                      margin="normal"
+                      variant="outlined"
+                      placeholder="MM/YY"
+                      inputProps={{ maxLength: 5 }}
+                      onChange={e =>
+                        this.setState({
+                          cc_expiry: e.target.value
+                        })
+                      }
+                    />
+                  </Grid>
+                  <Grid item md={2}>
+                    <Select
+                      onChange={e => this.setState({ cc_type: e.target.value })}
+                      inputProps={{
+                        name: "type",
+                        id: "type_id"
+                      }}
+                      name="type"
+                      value={this.state.cc_type}
+                      label="Type"
+                      style={{ marginTop: "14px" }}
+                    >
+                      <MenuItem value="Visa">
+                        <img
+                          src={Visa}
+                          alt="Visa"
+                          width="45px"
+                          heigth="40px"
+                        ></img>
+                      </MenuItem>
+                      <MenuItem value="MasterCard">
+                        <img
+                          src={Mastercard}
+                          alt="MasterCard"
+                          width="45px"
+                          heigth="40px"
+                        ></img>
+                      </MenuItem>
+                      <MenuItem value="American Express">
+                        <img
+                          src={AmericanExpress}
+                          alt="American Express"
+                          width="45px"
+                          heigth="40px"
+                        ></img>
+                      </MenuItem>
+                    </Select>
+                  </Grid>
+                  <Grid item md={12}>
+                    <Grid container spacing={1}>
+                      <Grid item md>
+                        <TextField
+                          id="m_lastname"
+                          required
+                          label="Holder's Last Name"
+                          style={{ witdh: "50%%", marginTop: "10px" }}
+                          className={classes.textField}
+                          value={this.state.cc_lastname}
+                          margin="normal"
+                          variant="outlined"
+                          onChange={e =>
+                            this.setState({
+                              cc_lastname: e.target.value
+                            })
+                          }
+                        />
+                      </Grid>
+                      <Grid item md>
+                        <TextField
+                          id="m_firstname"
+                          required
+                          label="Holder's First Name"
+                          style={{ witdh: "50%%", marginTop: "10px" }}
+                          className={classes.textField}
+                          value={this.state.cc_firstname}
+                          margin="normal"
+                          variant="outlined"
+                          onChange={e =>
+                            this.setState({
+                              cc_firstname: e.target.value
+                            })
+                          }
+                        />
+                      </Grid>
+                      <Grid item md>
+                        <TextField
+                          id="m_address"
+                          label="Holder's Address"
+                          required
+                          style={{ witdh: "50%%", marginTop: "10px" }}
+                          className={classes.textField}
+                          value={this.state.cc_address}
+                          margin="normal"
+                          variant="outlined"
+                          fullWidth
+                          onChange={e =>
+                            this.setState({
+                              cc_address: e.target.value
+                            })
+                          }
+                        />
                       </Grid>
                     </Grid>
                   </Grid>

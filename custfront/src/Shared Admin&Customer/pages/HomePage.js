@@ -1,18 +1,14 @@
-import React from "react";
+import React, { Fragment } from "react";
 import Tshirtlist from "../../CustomerSide/Tshirt Management/TshirtList";
 import Header from "../../CustomerSide/Common/Header";
+import Footer from "../../CustomerSide/Common/Footer";
+import { Paper } from "@material-ui/core";
 
 function HomePage() {
   return (
-    <div>
-      <div>
-        <Header />
-      </div>
-      <div>
-        <h1 style={{ textAlign: "center" }}> Home</h1>
-        <Tshirtlist />
-      </div>
-    </div>
+    <Fragment>
+      <Header />
+    </Fragment>
   );
 }
 

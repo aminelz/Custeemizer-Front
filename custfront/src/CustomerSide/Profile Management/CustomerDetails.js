@@ -15,6 +15,7 @@ import ModifyPersonalInfoModal from "./ModifyPersonalInfoModal";
 import ModifyPaymentInfoModal from "./ModifyPaymentInfoModal";
 import ModifyShippingInfoModal from "./ModifyShippingInfoModal";
 import swal from "sweetalert";
+import OrderList from "../../AdminSide/Manage Orders/OrderList";
 
 const styles = {
   Paper: {
@@ -48,14 +49,14 @@ const styles = {
     padding: "10px",
     marginTop: "70px",
     width: 120,
-    backgroundColor: "#54A391"
+    backgroundColor: "#000000"
   },
   MenuItem: {
-    backgroundColor: "#54A391",
+    backgroundColor: "#000000",
     color: "white",
     marginBottom: 2,
-    outlineColor: "white",
-    outlineWidth: "1px"
+    borderColor: "white",
+    borderWidth: "10px"
   }
 };
 const useStyles = theme => ({
@@ -93,19 +94,37 @@ class CustomerDetails extends Component {
       payment: [],
       user: [],
       disabled: false,
-      choice: "Home",
+      choice: "Landing",
       current_password: "",
       new_password: "",
-      new_password2: ""
+      new_password2: "",
+      modified: false
     };
+    this.handlestatechange = this.handlestatechange.bind(this);
+    this.fetchuser = this.fetchuser.bind(this);
+    this.fetchcustomer = this.fetchcustomer.bind(this);
   }
   handleClick(x) {
     this.setState({ choice: x });
   }
 
+  handlestatechange() {
+    this.setState({ modified: true });
+  }
+
   async componentDidMount() {
-    await this.fetchcustomer(4);
-    await this.fetchuser(4);
+    await this.fetchuser(this.props.user_id).then(
+      await this.fetchcustomer(this.props.user_id)
+    );
+  }
+
+  async componentDidUpdate(prevState) {
+    if (this.state.modified === true) {
+      await this.fetchuser(this.props.user_id);
+      await this.fetchcustomer(this.props.user_id).then(
+        this.setState({ modified: false })
+      );
+    }
   }
 
   async fetchcustomer(id) {
@@ -122,11 +141,11 @@ class CustomerDetails extends Component {
       .catch(err => console.log(err));
   }
   async fetchuser(id) {
-    const url = `http://localhost:8080/UserCustomer/${id}`;
+    const url = `http://localhost:8080/User/${id}`;
     await fetch(url)
       .then(async res => await res.json())
       .then(data => {
-        this.setState({ user: data[0] });
+        this.setState({ user: data });
       })
       .catch(err => console.log(err));
   }
@@ -165,11 +184,21 @@ class CustomerDetails extends Component {
           return errors;
         } else {
           var bcrypt = require("bcryptjs");
+
           bcrypt.compare(
             this.state.current_password,
-            this.state.user[5],
+            this.state.user.password,
             (err, res) => {
               if (res === false) {
+                console.log(
+                  "Inside compare current entered password: ",
+                  this.state.current_password
+                );
+                console.log(
+                  "Inside compare current password: ",
+                  this.state.user.password
+                );
+                console.log("ccomparison result : ", res);
                 swal(
                   "Oops!",
                   "The password your entered does not match with your old saved password !",
@@ -185,6 +214,7 @@ class CustomerDetails extends Component {
   }
 
   async patchpassword(id, newvalue) {
+    console.log("Old Password : ", this.state.user.password);
     await fetch(`http://localhost:8080/api/endUsers/${id}`, {
       method: "PATCH",
       headers: {
@@ -192,8 +222,9 @@ class CustomerDetails extends Component {
       },
       body: JSON.stringify(newvalue)
     })
-      .then(res => this.props.fetchuser())
-      .catch(err => swal("Error Updating", err, "error"));
+      .then(res => this.fetchuser(this.state.user.user_ID))
+      .then(console.log("After Update Password : ", this.state.user.password))
+      .catch(err => console.log(err));
   }
 
   async modifypassword() {
@@ -203,18 +234,18 @@ class CustomerDetails extends Component {
     } else {
       var bcrypt = require("bcryptjs");
       var hash = bcrypt.hashSync(this.state.new_password, 10);
-      console.log(hash, this.state.user[0]);
       var modifiedpassword = {
         password: hash
       };
-      this.patchpassword(this.state.user[0], modifiedpassword);
+      this.patchpassword(this.state.user.user_ID, modifiedpassword);
       swal(
         "Successfully Modified",
         "Your payment information has been updated !",
         "success"
-      ).then(function() {
-        window.location.reload();
-      });
+      ).then(this.emptyfields());
+      // ).then(function() {
+      //   window.location.reload();
+      // });
     }
   }
 
@@ -238,9 +269,8 @@ class CustomerDetails extends Component {
               </Grid>
             </Grid>
             <p>
-              {" "}
               Welcome on your account management portal, navigate using the menu
-              to view and modify your personal information
+              to manage your personal information and view your orders
             </p>
           </Paper>
         </Grid>
@@ -264,6 +294,8 @@ class CustomerDetails extends Component {
                   user={this.state.user}
                   customer={this.state.customer}
                   fetchcustomer={this.fetchcustomer}
+                  fetchuser={this.fetchuser}
+                  track={this.handlestatechange}
                 />
               </Grid>
             </Grid>
@@ -275,20 +307,22 @@ class CustomerDetails extends Component {
                     // style={styles.TextField}
                     id="t_firstname"
                     className={classes.textField}
-                    value={"" + this.state.user[3]}
+                    value={"" + this.state.user.first_name}
                     margin="normal"
                     disabled={dis}
                     variant="outlined"
+                    placeholder="First Name"
                   />
                   <TextField
                     id="t_lastname"
                     // style={styles.TextField}
                     label="Last Name"
                     className={classes.textField}
-                    value={"" + this.state.user[4]}
+                    value={"" + this.state.user.last_name}
                     margin="normal"
                     disabled={dis}
                     variant="outlined"
+                    placeholder="Last Name"
                   />
                 </Grid>
                 <Grid item>
@@ -297,10 +331,11 @@ class CustomerDetails extends Component {
                     // style={styles.TextField}
                     label="Email"
                     className={classes.textField}
-                    value={"" + this.state.user[2]}
+                    value={"" + this.state.user.email}
                     margin="normal"
                     disabled={dis}
                     variant="outlined"
+                    placeholder="Email"
                   />
                 </Grid>
                 <Grid item>
@@ -313,6 +348,7 @@ class CustomerDetails extends Component {
                     margin="normal"
                     disabled={dis}
                     variant="outlined"
+                    placeholder="Birth Date"
                   />
                   <TextField
                     id="t_phone"
@@ -323,6 +359,7 @@ class CustomerDetails extends Component {
                     margin="normal"
                     disabled={dis}
                     variant="outlined"
+                    placeholder="Phone Number"
                   />
                 </Grid>
               </Grid>
@@ -430,7 +467,9 @@ class CustomerDetails extends Component {
               <Grid item sm={1}>
                 <ModifyShippingInfoModal
                   shipping={this.state.shipping}
+                  user={this.state.user}
                   fetchcustomer={this.fetchcustomer}
+                  track={this.handlestatechange}
                 />
               </Grid>
             </Grid>
@@ -492,10 +531,10 @@ class CustomerDetails extends Component {
     );
     const payment = (
       <Grid container style={styles.Grid}>
-        <Grid item sm={6} style={styles.Grid}>
+        <Grid item md={6} style={styles.Grid}>
           <Paper style={styles.Paper}>
             <Grid container direction="row">
-              <Grid item sm={11}>
+              <Grid item md={11}>
                 <Typography
                   variant="subtitle1"
                   style={{ marginBottom: "20px" }}
@@ -503,30 +542,35 @@ class CustomerDetails extends Component {
                   Payment Information
                 </Typography>
               </Grid>
-              <Grid item sm={1}>
+              <Grid item md={1}>
                 <ModifyPaymentInfoModal
                   payment={this.state.payment}
+                  user={this.state.user}
                   fetchcustomer={this.fetchcustomer}
+                  track={this.handlestatechange}
                 />
               </Grid>
             </Grid>
             <form>
               <Grid container direction="row">
-                <Grid item sm={12}>
+                <Grid item md={12}>
                   <Cards
                     name={
                       this.state.payment.cc_lastname +
                       " " +
                       this.state.payment.cc_firstname
                     }
+                    cvc=""
+                    focus=""
                     number={this.state.payment.cc_number}
+                    expiry={this.state.payment.cc_expiry}
                   ></Cards>
                   <TextField
                     id="t_address"
                     label="Address"
-                    style={{ witdh: "50%%", marginTop: "10px" }}
+                    style={{ width: "92%", marginTop: "15px" }}
                     className={classes.textField}
-                    value={"" + this.state.shipping.street}
+                    value={"" + this.state.payment.cc_address}
                     margin="normal"
                     disabled={dis}
                     variant="outlined"
@@ -540,6 +584,31 @@ class CustomerDetails extends Component {
       </Grid>
     );
 
+    const orders = (
+      <Grid container style={styles.Grid}>
+        <Grid item sm={6} style={styles.Grid}>
+          <Paper style={styles.Paper}>
+            <Grid container>
+              <Grid item sm={11}>
+                <Typography
+                  variant="subtitle1"
+                  style={{ marginBottom: "20px" }}
+                >
+                  Account Management
+                </Typography>
+              </Grid>
+            </Grid>
+            {this.state.customer.customer_ID !== undefined && (
+              <OrderList
+                status="Customer"
+                customer_ID={this.state.customer.customer_ID}
+              />
+            )}
+          </Paper>
+        </Grid>
+      </Grid>
+    );
+
     if (this.state.choice === "Profile") {
       choice = account;
     } else if (this.state.choice === "Password") {
@@ -548,8 +617,10 @@ class CustomerDetails extends Component {
       choice = shipping;
     } else if (this.state.choice === "Payment") {
       choice = payment;
-    } else if (this.state.choice === "Home") {
+    } else if (this.state.choice === "Landing") {
       choice = home;
+    } else if (this.state.choice === "Orders") {
+      choice = orders;
     }
     return (
       <div>
@@ -558,7 +629,7 @@ class CustomerDetails extends Component {
             Manage Profile
           </Typography>
           <Grid container style={styles.Grid}>
-            <Grid item sm={12}>
+            <Grid item md={12}>
               <Grid container>
                 <Grid item sm={1}>
                   <Paper style={styles.Menu}>
@@ -595,10 +666,18 @@ class CustomerDetails extends Component {
                       >
                         Payment
                       </MenuItem>
+                      <MenuItem
+                        style={styles.MenuItem}
+                        onClick={() => {
+                          this.handleClick("Orders");
+                        }}
+                      >
+                        Orders
+                      </MenuItem>
                     </MenuList>
                   </Paper>
                 </Grid>
-                <Grid item sm style={styles.Grid}>
+                <Grid item md style={styles.Grid}>
                   {choice}
                 </Grid>
               </Grid>
