@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { withRouter } from "react-router-dom";
 import RemoveShoppingCartIcon from "@material-ui/icons/RemoveShoppingCart";
 import CheckoutModal from "./CheckoutModal";
+import swal from "sweetalert";
 
 class Cartlist extends Component {
   constructor(props) {
@@ -48,6 +49,35 @@ class Cartlist extends Component {
     });
   }
 
+  async incrementItem(id, oldquantity) {
+    const url = `http://localhost:8080/api/cartItems/${id}`;
+    await fetch(url, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ quantity: oldquantity + 1 })
+    })
+      .then(res => this.setState({ change: true }))
+      .catch(err => console.log(err));
+  }
+  async decrementItem(id, oldquantity) {
+    if (oldquantity === 1) {
+      this.removeItem(id);
+    } else {
+      const url = `http://localhost:8080/api/cartItems/${id}`;
+      await fetch(url, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ quantity: oldquantity - 1 })
+      })
+        .then(res => this.setState({ change: true }))
+        .catch(err => console.log(err));
+    }
+  }
+
   render() {
     const count = this.state.items.length;
     const tableRows = this.state.items.map((item, index) => (
@@ -70,7 +100,7 @@ class Cartlist extends Component {
           <button
             className="button"
             onClick={() => {
-              this.handleIncrement();
+              this.incrementItem(item.item_ID, item.quantity);
             }}
           >
             +
@@ -78,7 +108,7 @@ class Cartlist extends Component {
           <button
             className="button"
             onClick={() => {
-              this.handleDecrement();
+              this.decrementItem(item.item_ID, item.quantity);
             }}
           >
             -
